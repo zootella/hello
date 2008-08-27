@@ -1,0 +1,77 @@
+<project default="jar">
+
+	<!-- Delete folders to make everything from scratch -->
+	<target name="clean" description="Delete folders to make everything from scratch">
+
+		<!-- Delete our temporary folders -->
+		<delete dir="ant"/>
+		<delete dir="work"/>
+	</target>
+
+	<!-- Compile and package the source code into a jar -->
+	<target name="jar" description="Compile and package the source code into a jar">
+
+		<!-- Make folders for files this script will create -->
+		<mkdir dir="ant"/>
+		<mkdir dir="work"/>
+
+		<!-- Copy the tree of resource files so they'll also get bundled into the jar -->
+		<copy todir="ant">
+			<fileset dir="resource"/>
+		</copy>
+
+		<!--
+		Compile all the .java files into .class files
+
+		debug = yes        Include debug information in the .class files
+		destdir            Where to put the .class files
+		source and target  Use Java version 1.5
+		-->
+		<javac
+			debug="yes"
+			destdir="ant"
+			source="1.5"
+			target="1.5">
+
+			<!-- Compile the code in these folders, each has a tree of .java files in it -->
+			<src path="source"/>
+
+			<!-- Tell the Java compiler where .jar files are that the code above uses -->
+			<classpath>
+				<pathelement location="library/itunes-0.4.jar"/>
+				<pathelement location="library/rome.jar"/>
+				<pathelement location="library/jdom.jar"/>
+				<pathelement location="library/swing-worker-1.2.jar"/>
+			</classpath>
+		</javac>
+
+		<!--
+		Bundle files together to make the jar
+
+		jarfile          Where to make the .jar file, this will overwrite a file already there
+		basedir          Find the files to put in the jar here
+		filesonly = yes  Store only file entries
+		-->
+		<jar
+			jarfile="work/hello.jar"
+			basedir="ant"
+			filesonly="yes">
+
+			<!-- Write a manifest inside the jar -->
+			<manifest>
+
+				<!-- The class Java will run when the user double-clicks hello.jar -->
+				<attribute name="Main-Class" value="org.limewire.hello.all.Main"/>
+
+				<!-- The names of the .jar files hello will use when it runs, separated by spaces -->
+				<attribute name="Class-Path" value="itunes-0.4.jar rome.jar jdom.jar swing-worker-1.2.jar"/>
+			</manifest>
+		</jar>
+
+		<!-- Copy library jars next to the jar we just made in the work folder -->
+		<copy todir="work">
+			<fileset dir="library"/>
+		</copy>
+
+	</target>
+</project>

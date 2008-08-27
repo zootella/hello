@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="source"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="resource"/>
+	<classpathentry kind="src" path="stock"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="library/rome.jar"/>
+	<classpathentry kind="lib" path="library/jdom.jar"/>
+	<classpathentry kind="lib" path="library/swing-worker-1.2.jar"/>
+	<classpathentry kind="lib" path="library/itunes-0.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
