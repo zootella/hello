@@ -1,0 +1,39 @@
+diff --git a/source/org/limewire/hello/base/internet/InternetSelect.java b/source/org/limewire/hello/base/internet/InternetSelect.java
+index 79348fe..adc949d 100755
+--- a/source/org/limewire/hello/base/internet/InternetSelect.java
++++ b/source/org/limewire/hello/base/internet/InternetSelect.java
+@@ -10,7 +10,7 @@ import java.nio.channels.Selector;
+ import java.nio.channels.ServerSocketChannel;
+ import java.util.Iterator;
+ 
+-import javax.swing.SwingWorker;
++import org.jdesktop.swingworker.SwingWorker;
+ 
+ import org.limewire.hello.all.Main;
+ import org.limewire.hello.base.state.PlatformException;
+diff --git a/source/org/limewire/hello/base/web/Dns.java b/source/org/limewire/hello/base/web/Dns.java
+index 1c49e01..32dbca4 100755
+--- a/source/org/limewire/hello/base/web/Dns.java
++++ b/source/org/limewire/hello/base/web/Dns.java
+@@ -4,7 +4,7 @@ package org.limewire.hello.base.web;
+ import java.net.InetAddress;
+ import java.net.UnknownHostException;
+ 
+-import javax.swing.SwingWorker;
++import org.jdesktop.swingworker.SwingWorker;
+ 
+ import org.limewire.hello.all.Main;
+ import org.limewire.hello.base.internet.Ip;
+diff --git a/source/org/limewire/hello/base/web/GetFeed.java b/source/org/limewire/hello/base/web/GetFeed.java
+index 846041a..a2bbaf6 100755
+--- a/source/org/limewire/hello/base/web/GetFeed.java
++++ b/source/org/limewire/hello/base/web/GetFeed.java
+@@ -2,7 +2,7 @@ package org.limewire.hello.base.web;
+ 
+ import java.net.URL;
+ 
+-import javax.swing.SwingWorker;
++import org.jdesktop.swingworker.SwingWorker;
+ 
+ import org.limewire.hello.base.state.State;
+ import org.limewire.hello.base.time.Update;

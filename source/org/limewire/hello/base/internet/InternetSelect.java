@@ -10,7 +10,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Iterator;
 
-import javax.swing.SwingWorker;
+import org.jdesktop.swingworker.SwingWorker;
 
 import org.limewire.hello.all.Main;
 import org.limewire.hello.base.state.PlatformException;

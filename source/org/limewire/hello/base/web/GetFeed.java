@@ -2,7 +2,7 @@ package org.limewire.hello.base.web;
 
 import java.net.URL;
 
-import javax.swing.SwingWorker;
+import org.jdesktop.swingworker.SwingWorker;
 
 import org.limewire.hello.base.state.State;
 import org.limewire.hello.base.time.Update;

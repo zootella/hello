@@ -4,7 +4,7 @@ package org.limewire.hello.base.web;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import javax.swing.SwingWorker;
+import org.jdesktop.swingworker.SwingWorker;
 
 import org.limewire.hello.all.Main;
 import org.limewire.hello.base.internet.Ip;
