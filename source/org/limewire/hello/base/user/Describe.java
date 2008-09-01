@@ -1,5 +1,6 @@
 package org.limewire.hello.base.user;
 
+import javax.swing.JLabel;
 import javax.swing.text.JTextComponent;
 
 import org.limewire.hello.base.data.Number;
@@ -169,6 +170,11 @@ public class Describe {
 
 	/** Update the text of component to s if necessary. */
 	public static void update(JTextComponent component, String s) {
+		if (!component.getText().equals(s)) component.setText(s);
+	}
+	
+	/** Update the text of component to s if necessary. */
+	public static void update(JLabel component, String s) {
 		if (!component.getText().equals(s)) component.setText(s);
 	}
 	

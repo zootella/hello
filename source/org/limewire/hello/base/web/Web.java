@@ -7,8 +7,12 @@ import java.util.List;
 
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.internet.Internet;
+import org.limewire.hello.base.time.Update;
 
 public class Web {
+	
+	//TODO very bad, just for demo
+	public static Web web;
 
 	// -------- Make and pulse the program's Web object --------
 	
@@ -19,6 +23,7 @@ public class Web {
 	 * @param internet A link to the program's Internet object
 	 */
 	public Web(Internet internet) {
+		web = this;
 		this.internet = internet;          // Save the link to the program's Internet object
 		list = new LinkedList<WebDownload>(); // Make a new empty List to hold Download objects
 	}
@@ -44,7 +49,7 @@ public class Web {
 	 * @param folder The path to the folder where you want the file saved
 	 * @return       A new paused Download object
 	 */
-	public WebDownload download(Url url, Path folder) {
-		return new WebDownload(this, url, folder); // Make and return a new Download object
+	public WebDownload download(Url url, Path folder, Update update) {
+		return new WebDownload(this, url, folder, update); // Make and return a new Download object
 	}
 }

@@ -1,4 +1,4 @@
-package org.limewire.hello.base.user;
+package org.limewire.hello.base.model;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -23,7 +23,7 @@ public abstract class Model extends Close {
 	public void remove(View view) { views.remove(view); } // Remove the View from our list
 
 	/** The object this Model is a part of has changed, have Model tell all the views above to update. */
-	public void update() { for (View view : views) view.update(); } // This Model has changed, tell all our views above
+	public void send() { for (View view : views) view.receive(); } // This Model has changed, tell all our views above
 	/** The object this Model is a part of is closed, have Model tell all the views above to close. */
 	public void close() {                     // This Model is closed, tell all our views above
 		Set<View> copy = new HashSet<View>(); // Copy the Set so we can change the original

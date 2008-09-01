@@ -1,5 +1,8 @@
 package org.limewire.hello.base.user;
 
+import org.limewire.hello.base.model.Model;
+import org.limewire.hello.base.model.View;
+
 /** A Row represents a row in a Table and on the screen. */
 public class Row {
 	
@@ -33,10 +36,10 @@ public class Row {
 	
 	
 	// Our Model underneath calls these methods
-	private class MyView implements View {
+	private class MyView extends View {
 
 		// The Model has changed, we need to update what we're showing the user
-		public void update() {
+		public void receive() {
 			table.update(model); // Have the Table do it
 		}
 

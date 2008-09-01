@@ -16,6 +16,8 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.limewire.hello.base.model.Model;
+
 public class Table {
 
 	// -------- Make a Table and set up its columns --------

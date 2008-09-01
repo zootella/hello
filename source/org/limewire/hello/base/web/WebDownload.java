@@ -9,6 +9,7 @@ import org.limewire.hello.base.file.Save;
 import org.limewire.hello.base.internet.Ip;
 import org.limewire.hello.base.state.State;
 import org.limewire.hello.base.time.Time;
+import org.limewire.hello.base.time.Update;
 import org.limewire.hello.base.user.Describe;
 
 
@@ -32,12 +33,13 @@ public class WebDownload {
 	 * @param url    The URL to download, must start "http://"
 	 * @param folder The path to the folder where you want the file saved
 	 */
-	public WebDownload(Web web, Url url, Path folder) {
+	public WebDownload(Web web, Url url, Path folder, Update update) {
 
 		// Save the given objects
 		this.web = web;
 		this.url = url;
 		this.folder = folder;
+		this.update = update;
 		
 		// Add this new Download object to the program's list of all of them
 		web.list.add(this);
@@ -57,6 +59,8 @@ public class WebDownload {
 	private Dns dns;
 	/** The Get object we are using to request the file from the Web server. */
 	private Get get;
+	
+	private Update update;
 
 	// -------- Tell this Download object to do something --------
 
@@ -92,6 +96,9 @@ public class WebDownload {
 	 * The program periodically calls pulse() on this object.
 	 */
 	public void pulse() {
+		
+		//TODO assume we'll change, horrid, but ok for now
+		update.send();
 
 		// If we're closed, there is nothing more for a pulse to do, don't let one change us
 		if (state().isClosed()) return;

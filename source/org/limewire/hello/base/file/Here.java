@@ -10,6 +10,11 @@ import org.limewire.hello.base.web.Url;
 public class Here {
 
 	// -------- Find where this program is --------
+	
+	//TODO now you understand how the app will be packaged for windows, mac, and linux
+	// have two method, inside() and outside()
+	// have unjarred always return working for both
+	// have jarred look for a package, and then have inside() be where the jar is and outside() be where the package is
 
 	/**
 	 * The Path to the folder this program is running in.

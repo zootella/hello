@@ -7,12 +7,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.limewire.hello.base.model.View;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.Dialog;
 import org.limewire.hello.base.user.Panel;
 import org.limewire.hello.base.user.SelectTextArea;
-import org.limewire.hello.base.user.View;
 import org.limewire.hello.feed.Episode;
 
 /** The Episode Properties dialog box on the screen that shows the user the properties of a podcast episode. */
@@ -24,7 +24,7 @@ public class EpisodePropertiesDialog {
 	private Episode episode;
 
 	/** Show the properties of Episode in a dialog box. */
-	public EpisodePropertiesDialog(FeedTab tab, Episode episode) {
+	public EpisodePropertiesDialog(Episode episode) {
 
 		// Save the given link
 		this.episode = episode;
@@ -88,10 +88,10 @@ public class EpisodePropertiesDialog {
 
 	// When the Episode's Model changes, it calls the methods here
 	private View view;
-	private class MyView implements View {
+	private class MyView extends View {
 
 		// The Episode Model changed, we need to update our text for the user
-		public void update() {
+		public void receive() {
 			Describe.update(status,      episode.model.status()); // Get text from the Episode's Model
 			Describe.update(title,       episode.model.episode());
 			Describe.update(time,        episode.model.time());

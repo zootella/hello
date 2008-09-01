@@ -5,10 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.limewire.hello.base.model.Model;
 import org.limewire.hello.base.time.Once;
 import org.limewire.hello.base.time.Update;
 import org.limewire.hello.base.time.UpdateReceive;
-import org.limewire.hello.base.user.Model;
 import org.limewire.hello.base.web.GetFeed;
 import org.limewire.hello.base.web.Url;
 
@@ -105,7 +105,7 @@ public class Feed {
 				}
 
 				// Tell our Model we've changed
-				model.update();
+				model.send();
 			}
 		}
 	}

@@ -279,7 +279,7 @@ public class FeedTab {
 		public void actionPerformed(ActionEvent a) {
 
 			// Show the dialog box for the first selected row
-			new EpisodePropertiesDialog(me(), (Episode)episodes.getSelectedRow().model.out());
+			new EpisodePropertiesDialog((Episode)episodes.getSelectedRow().model.out());
 		}
 	}
 }

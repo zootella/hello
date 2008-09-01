@@ -7,16 +7,19 @@ import java.util.Map;
 
 import org.limewire.hello.base.data.Outline;
 import org.limewire.hello.base.desktop.Open;
+import org.limewire.hello.base.file.Here;
 import org.limewire.hello.base.file.Name;
 import org.limewire.hello.base.file.Path;
+import org.limewire.hello.base.model.Model;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.MessageException;
 import org.limewire.hello.base.state.State;
 import org.limewire.hello.base.time.Time;
+import org.limewire.hello.base.time.Update;
 import org.limewire.hello.base.time.UpdateReceive;
 import org.limewire.hello.base.user.Describe;
-import org.limewire.hello.base.user.Model;
 import org.limewire.hello.base.user.TableRow;
+import org.limewire.hello.base.web.Web;
 import org.limewire.hello.base.web.WebDownload;
 import org.limewire.hello.base.web.Url;
 import org.limewire.hello.download.user.DownloadTab;
@@ -83,8 +86,12 @@ public class Download extends Close {
 		
 		// Make our inner Model object to tells views above when we've changed
 		model = new MyModel();
+		
+		update = new Update(new MyUpdateReceive());
 	}
-
+	
+	private Update update;
+	
 	/** A link to the object that is the program's list of downloads. */
 	private DownloadList list;
 	
@@ -133,19 +140,18 @@ public class Download extends Close {
 	/** Have this DownloadRow open a new TCP socket connection to the Web server to try to download its file. */
 	public void get() {
 		
-		/*
 		// Make sure we can get
 		if (!canGet()) return;
-
+		
 		// If we don't have a Download object yet, make it now
-		if (download == null) download = tab.web.download(url, tab.folderSetting.value());
+		if (download == null) download = Web.web.download(url, Here.folder(), update);
+		//TODO don't use here folder
 
 		// Give our new Download object permission to make a single request to the Web server
 		download.get();
 		
 		// Update our row in the Table
-		update();
-		*/
+		model.send();
 	}
 	
 	public void pause() {
@@ -168,7 +174,7 @@ public class Download extends Close {
 		cannot = null;
 
 		// Update the views looking at us
-		model.update();
+		model.send();
 	}
 
 	/** Remove this DownloadRow from the Table and from the program. */
@@ -251,23 +257,22 @@ public class Download extends Close {
 				download = null;
 				
 				// Update our row in the Table and any other views looking at our Model
-				model.update();
+				model.send();
 				
 			// It's still downloading
 			} else {
 				
 				// Update our row in the Table, careful to not flicker the text too quickly
-				if (update == null) update = new Time();    // Make the update Time object when this code first runs
-				if (update.expired(Describe.delay, true)) { // We've waited long enough, or true for this is the first time
-					update.set();                           // Record we changed what's on the screen now
-					model.update();                         // Show the user current information
+				if (update2 == null) update2 = new Time();    // Make the update Time object when this code first runs
+				if (update2.expired(Describe.delay, true)) { // We've waited long enough, or true for this is the first time
+					update2.set();                           // Record we changed what's on the screen now
+					model.send();                         // Show the user current information
 				}
 			}
 		}
 	}
 	
-	/** The Time we last updated progress information in our row in the Table. */
-	private Time update;
+	private Time update2;
 
 	// -------- Model --------
 
@@ -293,7 +298,7 @@ public class Download extends Close {
 		// Status
 		
 		/** Compose text for the Status column in our row in the Table. */
-		private String status() {
+		public String status() {
 			if      (download != null) return download.describeStatus(); // Getting
 			else if (saved    != null) return "Done";                    // Done
 			else if (cannot   != null) return cannot;                    // Cannot
@@ -314,7 +319,7 @@ public class Download extends Close {
 		*/
 		
 		/** Turn our status into a number that CompareStatus.compare() can compare with another row. */
-		private int statusNumber() {
+		public int statusNumber() {
 			State state = state(); // Get our current state
 			if      (state.state == State.couldNot)  return 0; // Cannot, order first
 			else if (state.state == State.completed) return 1; // Done
@@ -325,7 +330,7 @@ public class Download extends Close {
 		// Name
 		
 		/** Compose text for the Name column in our row in the Table. */
-		private String name() {
+		public String name() {
 			if (download != null) return download.name().toString();
 			else if (name != null) return name.toString();
 			else return url.name().toString();
@@ -345,7 +350,7 @@ public class Download extends Close {
 		// Size
 		
 		/** Compose text for the Size column in our row in the Table. */
-		private String size() {
+		public String size() {
 			if (download != null) return download.describeSize();
 			else if (saved != null) return Describe.size(size);
 			else return "";
@@ -368,7 +373,7 @@ public class Download extends Close {
 		*/
 		
 		/** How big the file we're downloading is, in bytes, or -1 if we don't know. */
-		private long sizeNumber() {
+		public long sizeNumber() {
 			if (download != null) return download.size();
 			else if (saved != null) return size;
 			else return -1;
@@ -377,7 +382,7 @@ public class Download extends Close {
 		// Type
 		
 		/** Compose text for the Type column in our row in the Table. */
-		private String type() {
+		public String type() {
 			if (download != null) return download.name().extension;
 			else if (name != null) return name.extension;
 			else return url.name().extension;
@@ -397,7 +402,7 @@ public class Download extends Close {
 		// Address
 		
 		/** Compose text for the Address column in our row in the Table. */
-		private String address() {
+		public String address() {
 			return url.address;
 		}
 
@@ -415,7 +420,7 @@ public class Download extends Close {
 		// Saved To
 		
 		/** Compose text for the Saved To column in our row in the Table. */
-		private String savedTo() {
+		public String savedTo() {
 			if (saved != null) return saved.toString();
 			else return "";
 		}

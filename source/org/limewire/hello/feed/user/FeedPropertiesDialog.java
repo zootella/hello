@@ -7,16 +7,17 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.limewire.hello.base.model.View;
+import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.Dialog;
 import org.limewire.hello.base.user.Panel;
 import org.limewire.hello.base.user.SelectTextArea;
-import org.limewire.hello.base.user.View;
 import org.limewire.hello.feed.Feed;
 
 /** The Feed Properties dialog box on the screen that shows the user the properties of a feed. */
-public class FeedPropertiesDialog {
+public class FeedPropertiesDialog extends Close {
 	
 	// -------- Dialog --------
 
@@ -80,10 +81,10 @@ public class FeedPropertiesDialog {
 
 	// When the Feed's Model changes, it calls the methods here
 	private View view;
-	private class MyView implements View {
+	private class MyView extends View {
 
 		// The Feed Model changed, we need to update our text for the user
-		public void update() {
+		public void receive() {
 			Describe.update(status,      feed.model.status());
 			Describe.update(name,        feed.model.name());
 			Describe.update(description, feed.model.description());
@@ -93,6 +94,7 @@ public class FeedPropertiesDialog {
 		// The Feed closed, we need to close this properties dialog
 		public void close() {
 			me().close(); // Call FeedPropertiesDialog.close()
+			count();
 		}
 	}
 	
@@ -134,6 +136,7 @@ public class FeedPropertiesDialog {
 	private void close() {
 		feed.model.remove(view); // Disconnect us from the Model below
 		dialog.dispose(); // Close the dialog box
+		count();
 	}
 	
 	/** Give inner classes a link to this outer FeedPropertiesDialog object. */

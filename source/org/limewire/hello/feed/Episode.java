@@ -3,7 +3,7 @@ package org.limewire.hello.feed;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.limewire.hello.base.user.Model;
+import org.limewire.hello.base.model.Model;
 
 import com.sun.syndication.feed.module.itunes.EntryInformation;
 import com.sun.syndication.feed.synd.SyndEntry;

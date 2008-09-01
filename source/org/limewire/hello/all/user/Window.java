@@ -33,7 +33,7 @@ public class Window {
 		// Make the objects that represent the tabs in the window
     	feed = new FeedTab(this, program.feed);
 		status = new StatusTab();
-		download = new DownloadTab(this, program.web, program.store);
+		download = new DownloadTab(program.download, this, program.web);
 		bittorrent = new BitTorrentTab(this, program.bitTorrent);
 
 		// Make a row of tabs, and add the tabs to it

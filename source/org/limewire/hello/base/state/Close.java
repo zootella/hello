@@ -25,6 +25,7 @@ public class Close {
 		// Only make it past here once for this object that extends Close
 		if (counted) {
 			System.out.println("The program called close() on the same object a second time!"); // Warn the programmer
+			//TODO replace this with an exception that crashes the program with a dialog box
 			return;
 		}
 		counted = true;
@@ -42,5 +43,6 @@ public class Close {
 	public static void check() {
 		if (open != 0)
 			System.out.println("The program closed without calling close() on " + open + " objects!"); // Warn the programmer
+			//TODO replace this with an exception that crashes the program with a dialog box
 	}
 }
