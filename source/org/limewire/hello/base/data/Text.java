@@ -4,7 +4,7 @@ package org.limewire.hello.base.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.limewire.hello.base.state.ChopException;
+import org.limewire.hello.base.exception.ChopException;
 
 public class Text {
 

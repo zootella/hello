@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Dialog;
 import org.limewire.hello.base.user.Panel;

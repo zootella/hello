@@ -6,8 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.limewire.hello.base.file.Path;
-import org.limewire.hello.base.internet.Internet;
-import org.limewire.hello.base.time.Update;
+import org.limewire.hello.base.internet.old.Internet;
+import org.limewire.hello.base.state.Update;
+import org.limewire.hello.base.state.old.OldUpdate;
 
 public class Web {
 	

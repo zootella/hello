@@ -3,7 +3,7 @@ package org.limewire.hello.base.file;
 import java.io.File;
 
 import org.limewire.hello.base.data.Text;
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.MessageException;
 
 // immutable, some methods touch the disk, always an absolute path
 /** A Path is an absolute disk path, like "C:\folder\folder\file.ext". */

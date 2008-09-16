@@ -1,8 +1,9 @@
 package org.limewire.hello.all;
 
 import org.limewire.hello.all.user.Window;
-import org.limewire.hello.base.internet.Internet;
+import org.limewire.hello.base.internet.old.Internet;
 import org.limewire.hello.base.setting.Store;
+import org.limewire.hello.base.state.old.OldPulse;
 import org.limewire.hello.base.web.Web;
 import org.limewire.hello.bittorrent.BitTorrent;
 import org.limewire.hello.download.DownloadList;
@@ -28,7 +29,7 @@ public class Program {
 	public Program() {
 
 		// Make the objects that are a part of this new Program object
-		pulse = new Pulse(this);   // The Pulse constructor needs a link back up to this Program object
+		pulse = new OldPulse(this);   // The Pulse constructor needs a link back up to this Program object
 		store = new Store();       // Open Store.txt from the last time the program ran
 		internet = new Internet();
 		web = new Web(internet);   // The Web constructor needs a link to the Internet object
@@ -42,7 +43,7 @@ public class Program {
 	}
 
 	/** The program's Pulse object calls the pulse() method as the program runs. */
-	public Pulse pulse;
+	public OldPulse pulse;
 	/** The program's Store object keeps settings and data in Store.txt when it's not running. */
 	public Store store;
 	/** The program's Internet object makes TCP socket connections and sends UDP packets. */

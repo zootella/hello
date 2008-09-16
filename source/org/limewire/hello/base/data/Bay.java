@@ -56,6 +56,7 @@ public class Bay {
 
 	/** How much data this Bay object is holding, in bytes. */
 	public int size() { return data().size(); }
+	//TODO this would be faster if it just did the math
 	
 	/** Look at the data this Bay object holds. */
 	public Data data() { return new Data(buffer()); }
@@ -192,6 +193,9 @@ public class Bay {
 	 * To see this, call channel.socket().getSendBufferSize() and channel.socket().getReceiveBufferSize().
 	 */
 	public static final int big = 8 * 1024;
+	//TODO replace with Bin.size
+	//TODO stop using all below
+	// note Bin.medium 8K is our TCP buffer size, and Bin.big 64K is our UDP buffer size
 	
 	// -------- File transfer --------
 
@@ -236,6 +240,7 @@ public class Bay {
 		
 		// Make sure we have data to upload
 		if (size() == 0) return 0;
+		//TODO throw IOException on nothing to upload
 		
 		// Clip our buffer's position and limit around our data
 		buffer.limit(buffer.position()); // Normally, they clip the free space at the end
@@ -262,6 +267,8 @@ public class Bay {
 
 		// Return the number of bytes the channel took from us
 		return uploaded;
+		//TODO throw IOException on nothing uploaded
+		//TODO no counting, have the caller measure the size
 	}
 
 	/**
@@ -284,6 +291,9 @@ public class Bay {
 		int downloaded = c.read(buffer);               // Moves position forward so it still clips out the empty space at the end
 		if (downloaded == -1) throw new IOException(); // Make sure read() didn't report end of stream
 		return downloaded;                             // Return the number of bytes the channel gave us
+		
+		//TODO throw IOException on downloaded nothing
+		//TODO no counting, have the caller measure the size
 	}
 
 	/**

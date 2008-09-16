@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.limewire.hello.base.encode.Encode;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.CodeException;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.internet.IpPort;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.CodeException;
-import org.limewire.hello.base.state.MessageException;
 
 // rules for designing your outline
 // tag names can only be numbers and lowercase letters, as short as possible

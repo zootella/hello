@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.limewire.hello.base.data.Number;
 import org.limewire.hello.base.data.Text;
-import org.limewire.hello.base.state.CodeException;
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.CodeException;
+import org.limewire.hello.base.exception.MessageException;
 
 public class StripePattern {
 

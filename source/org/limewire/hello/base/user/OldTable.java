@@ -16,8 +16,8 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.limewire.hello.base.model.Model;
-import org.limewire.hello.base.time.UpdateReceive;
+import org.limewire.hello.base.state.Model;
+import org.limewire.hello.base.state.Receive;
 
 public class OldTable {
 

@@ -25,8 +25,8 @@ import javax.swing.event.ListSelectionListener;
 import org.limewire.hello.all.user.Window;
 import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.desktop.Clipboard;
-import org.limewire.hello.base.model.View;
-import org.limewire.hello.base.state.Close;
+import org.limewire.hello.base.state.View;
+import org.limewire.hello.base.state.old.OldClose;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.Panel;
@@ -37,7 +37,7 @@ import org.limewire.hello.base.web.Web;
 import org.limewire.hello.download.Download;
 import org.limewire.hello.download.DownloadList;
 
-public class DownloadTab extends Close {
+public class DownloadTab extends OldClose {
 
 	// -------- Settings --------
 

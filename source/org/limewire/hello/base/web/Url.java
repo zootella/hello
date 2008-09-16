@@ -6,15 +6,13 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import junit.framework.Assert;
-
 import org.limewire.hello.base.data.Convert;
 import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.data.TextSplit;
+import org.limewire.hello.base.exception.MessageException;
+import org.limewire.hello.base.exception.PlatformException;
 import org.limewire.hello.base.file.Name;
 import org.limewire.hello.base.file.PathName;
-import org.limewire.hello.base.state.MessageException;
-import org.limewire.hello.base.state.PlatformException;
 
 public class Url {
 

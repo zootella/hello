@@ -1,7 +1,7 @@
 package org.limewire.hello.base.user;
 
-import org.limewire.hello.base.model.Model;
-import org.limewire.hello.base.model.View;
+import org.limewire.hello.base.state.Model;
+import org.limewire.hello.base.state.View;
 
 /** A Row represents a row in a Table and on the screen. */
 public class Row {

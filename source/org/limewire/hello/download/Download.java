@@ -7,16 +7,17 @@ import java.util.Map;
 
 import org.limewire.hello.base.data.Outline;
 import org.limewire.hello.base.desktop.Open;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.Here;
 import org.limewire.hello.base.file.Name;
 import org.limewire.hello.base.file.Path;
-import org.limewire.hello.base.model.Model;
-import org.limewire.hello.base.state.Close;
-import org.limewire.hello.base.state.MessageException;
-import org.limewire.hello.base.state.State;
-import org.limewire.hello.base.time.Time;
-import org.limewire.hello.base.time.Update;
-import org.limewire.hello.base.time.UpdateReceive;
+import org.limewire.hello.base.state.Model;
+import org.limewire.hello.base.state.Receive;
+import org.limewire.hello.base.state.Update;
+import org.limewire.hello.base.state.old.OldClose;
+import org.limewire.hello.base.state.old.OldState;
+import org.limewire.hello.base.state.old.OldUpdate;
+import org.limewire.hello.base.time.OldTime;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.TableRow;
 import org.limewire.hello.base.web.Web;
@@ -29,7 +30,7 @@ import org.limewire.hello.feed.Feed.MyModel;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 
-public class Download extends Close {
+public class Download extends OldClose {
 
 	// -------- Store to and restore from an Outline in Store.txt --------
 
@@ -87,7 +88,7 @@ public class Download extends Close {
 		// Make our inner Model object to tells views above when we've changed
 		model = new MyModel();
 		
-		update = new Update(new MyUpdateReceive());
+		update = new Update(new MyReceive());
 	}
 	
 	private Update update;
@@ -121,20 +122,20 @@ public class Download extends Close {
 	 * 
 	 * @return A State object that tells what state this DownloadRow object is in.
 	 */
-	public State state() {
+	public OldState state() {
 		
 		// Figure out our state by looking at which internal objects we have
-		if      (download != null) return State.doing();     // Getting
-		else if (saved    != null) return State.completed(); // Done
-		else if (cannot   != null) return State.couldNot();  // Cannot
-		else                       return State.paused();    // Pending
+		if      (download != null) return OldState.doing();     // Getting
+		else if (saved    != null) return OldState.completed(); // Done
+		else if (cannot   != null) return OldState.couldNot();  // Cannot
+		else                       return OldState.paused();    // Pending
 	}
 
 	// -------- The methods behind the items on the right-click menu --------
 	
 	/** Determine if we can Get right now. */
 	public boolean canGet() {
-		return state().state == State.paused; // Return true if we're pending
+		return state().state == OldState.paused; // Return true if we're pending
 	}
 
 	/** Have this DownloadRow open a new TCP socket connection to the Web server to try to download its file. */
@@ -163,7 +164,7 @@ public class Download extends Close {
 		
 		// Discard our Download object if we have one
 		if (download != null) {
-			download.close(State.cancelled()); // Have it close connections and delete its temporary file
+			download.close(OldState.cancelled()); // Have it close connections and delete its temporary file
 			download = null; // Release it for garbage collection
 		}
 
@@ -219,7 +220,7 @@ public class Download extends Close {
 	// -------- Update --------
 
 	// When a worker object we gave our Update has progressed or completed, it calls this receive() method
-	private class MyUpdateReceive implements UpdateReceive {
+	private class MyReceive implements Receive {
 		public void receive() {
 
 			// We only need to look for changes if we have a Download object
@@ -239,7 +240,7 @@ public class Download extends Close {
 				 */
 				
 				// If finished downloading the file successfully
-				if (download.state().state == State.completed) {
+				if (download.state().state == OldState.completed) {
 					
 					// Get information about the file it saved
 					saved = download.saved();
@@ -247,7 +248,7 @@ public class Download extends Close {
 					name = download.name();
 					
 					// It had to give up
-				} else if (download.state().state == State.couldNot) {
+				} else if (download.state().state == OldState.couldNot) {
 					
 					// Save the explination why
 					cannot = download.describeStatus();
@@ -263,7 +264,7 @@ public class Download extends Close {
 			} else {
 				
 				// Update our row in the Table, careful to not flicker the text too quickly
-				if (update2 == null) update2 = new Time();    // Make the update Time object when this code first runs
+				if (update2 == null) update2 = new OldTime();    // Make the update Time object when this code first runs
 				if (update2.expired(Describe.delay, true)) { // We've waited long enough, or true for this is the first time
 					update2.set();                           // Record we changed what's on the screen now
 					model.send();                         // Show the user current information
@@ -272,7 +273,7 @@ public class Download extends Close {
 		}
 	}
 	
-	private Time update2;
+	private OldTime update2;
 
 	// -------- Model --------
 
@@ -320,10 +321,10 @@ public class Download extends Close {
 		
 		/** Turn our status into a number that CompareStatus.compare() can compare with another row. */
 		public int statusNumber() {
-			State state = state(); // Get our current state
-			if      (state.state == State.couldNot)  return 0; // Cannot, order first
-			else if (state.state == State.completed) return 1; // Done
-			else if (state.state == State.doing)     return 2; // Getting
+			OldState state = state(); // Get our current state
+			if      (state.state == OldState.couldNot)  return 0; // Cannot, order first
+			else if (state.state == OldState.completed) return 1; // Done
+			else if (state.state == OldState.doing)     return 2; // Getting
 			else                                     return 3; // Pending, order last
 		}
 		

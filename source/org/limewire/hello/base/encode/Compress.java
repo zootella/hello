@@ -7,9 +7,9 @@ import java.util.zip.Inflater;
 
 import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.MessageException;
-import org.limewire.hello.base.state.ProgramException;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.MessageException;
+import org.limewire.hello.base.exception.ProgramException;
 
 public class Compress {
 

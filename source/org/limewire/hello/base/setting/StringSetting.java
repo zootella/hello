@@ -1,7 +1,7 @@
 package org.limewire.hello.base.setting;
 
 import org.limewire.hello.base.data.Outline;
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.MessageException;
 
 
 public class StringSetting {

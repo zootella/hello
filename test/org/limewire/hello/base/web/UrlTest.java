@@ -2,7 +2,7 @@ package org.limewire.hello.base.web;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.MessageException;
 
 public class UrlTest {
 

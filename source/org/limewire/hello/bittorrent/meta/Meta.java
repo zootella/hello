@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.encode.Sha;
+import org.limewire.hello.base.encode.Hash;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.PathName;
 import org.limewire.hello.base.pattern.Stripe;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.MessageException;
 import org.limewire.hello.base.web.Url;
 import org.limewire.hello.bittorrent.bencode.Bencoded;
 
@@ -85,10 +85,10 @@ public class Meta {
 
 			// Make a MetaPiece object with information about this piece, and add it to our list
 			MetaPiece p = new MetaPiece(
-				this,                  // Link back up to this Meta object
-				number,                // The piece number like 0, 1, 2
-				s,                     // The Stripe where this piece is in the torrent's combined data
-				hashes.cut(Sha.size)); // Cut the next 20-byte SHA1 hash from hashes for this MetaPiece object
+				this,                   // Link back up to this Meta object
+				number,                 // The piece number like 0, 1, 2
+				s,                      // The Stripe where this piece is in the torrent's combined data
+				hashes.cut(Hash.size)); // Cut the next 20-byte SHA1 hash from hashes for this MetaPiece object
 			pieces.add(p);
 
 			// Make number bigger for the next loop

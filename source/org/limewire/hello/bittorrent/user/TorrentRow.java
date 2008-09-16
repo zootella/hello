@@ -3,7 +3,7 @@ package org.limewire.hello.bittorrent.user;
 
 import java.util.Comparator;
 
-import org.limewire.hello.base.time.Time;
+import org.limewire.hello.base.time.OldTime;
 import org.limewire.hello.base.user.TableRow;
 import org.limewire.hello.bittorrent.Torrent;
 
@@ -51,7 +51,7 @@ public class TorrentRow {
 	}
 	
 	/** The Time we last updated progress information in our row in the Table. */
-	private Time update;
+	private OldTime update;
 
 	// -------- Text and sorting for each cell of our row in the Table --------
 

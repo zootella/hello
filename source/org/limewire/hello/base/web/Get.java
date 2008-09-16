@@ -5,17 +5,17 @@ import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Number;
 import org.limewire.hello.base.data.Split;
 import org.limewire.hello.base.data.Text;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.CodeException;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.FileException;
-import org.limewire.hello.base.internet.Internet;
 import org.limewire.hello.base.internet.Ip;
 import org.limewire.hello.base.internet.IpPort;
-import org.limewire.hello.base.internet.Tube;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.CodeException;
-import org.limewire.hello.base.state.MessageException;
-import org.limewire.hello.base.state.State;
-import org.limewire.hello.base.time.Time;
+import org.limewire.hello.base.internet.old.Internet;
+import org.limewire.hello.base.internet.old.OldTube;
+import org.limewire.hello.base.state.old.OldState;
+import org.limewire.hello.base.time.OldTime;
 
 
 // A Get object performs one HTTP GET or HEAD request to a Web server
@@ -67,7 +67,7 @@ public class Get {
 	 * Our Tube that we talk to the Web server through.
 	 * A Get object always has a Tube, so you can use this reference without making sure it's not null first
 	 */
-	private Tube tube;
+	private OldTube tube;
 
 	/** The group of HTTP request headers we sent the Web server to request the file. */
 	private HeaderGroup request;
@@ -104,7 +104,7 @@ public class Get {
 
 				// Neither of those, we can't download the file because we don't know how big it is
 				} else {
-					throw new State(State.couldNot, "Size Unknown");
+					throw new OldState(OldState.couldNot, "Size Unknown");
 				}
 			}
 
@@ -112,7 +112,7 @@ public class Get {
 			if (tube.state().isClosed()) throw tube.state(); // The state is cancelled or socketException
 
 		// One of the methods we called realized we are done, close this Get object with the reason it found
-		} catch (State state) { close(state); }
+		} catch (OldState state) { close(state); }
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class Get {
 	 * Looks for the lines of ASCII text that end with a blank line, parsing them into the Header object named response.
 	 * Makes sure the HTTP status code is 200.
 	 */
-	private void downloadResponseHeaders() throws State {
+	private void downloadResponseHeaders() throws OldState {
 		
 		// Parse the headers into a HeaderGroup object, and remove them from the Tube
 		try {
@@ -133,7 +133,7 @@ public class Get {
 		if (response.statusCode() != 200) {
 			String s = response.statusMessage(); // Get text like "Not Found" from the first line like "404 Not Found"
 			if (Text.isBlank(s)) s = "Bad Status Code"; // Make sure it's not blank
-			throw new State(State.couldNot, s);
+			throw new OldState(OldState.couldNot, s);
 		}
 	}
 
@@ -141,17 +141,17 @@ public class Get {
 	 * The Web server sent HTTP response headers that told us how big the file is after them.
 	 * Download the file.
 	 */
-	private void downloadContentLength() throws State {
+	private void downloadContentLength() throws OldState {
 
 		// Move all the data from the Tube to the file
 		downloadFileData(tube.download.size());
 		
 		// If we've downloaded the whole content length, we're done
-		if (response.number(Header.contentLength) == saved) throw new State(State.completed, "Done");
+		if (response.number(Header.contentLength) == saved) throw new OldState(OldState.completed, "Done");
 	}
 
 	/** Move size bytes of file data from our Tube to our file. */
-	private void downloadFileData(int size) throws State {
+	private void downloadFileData(int size) throws OldState {
 		try {
 			
 			// Move data from the Tube to the file
@@ -161,7 +161,7 @@ public class Get {
 			// Record we saved that many more bytes to our file
 			saved += size;
 
-		} catch (FileException e) { throw new State(State.fileException); // There was a problem saving to disk
+		} catch (FileException e) { throw new OldState(OldState.fileException); // There was a problem saving to disk
 		} catch (ChopException e) { throw new CodeException(); } // There is a mistake in the code
 	}
 
@@ -178,7 +178,7 @@ public class Get {
 	 * @return false to call this method again later, when more data may have arrived.
 	 *         true to call this method again right now to continue looking at the data that's already here.
 	 */
-	private boolean downloadChunkedTransfer() throws State {
+	private boolean downloadChunkedTransfer() throws OldState {
 		
 		/*
 		 * HTTP 1.1 chunked transfer coding looks like this:
@@ -219,8 +219,8 @@ public class Get {
 			s = Text.before(s, ";").trim(); // Parse "1a" from "1a ; note", you have seen spaces before the semicolon
 			int i = -1;
 			try { i = Number.toIntBase16(s, 0); } catch (MessageException e) {}
-			if (i == -1) throw new State(State.couldNot,  "Size Unknown"); // Unable to read the size number
-			if (i ==  0) throw new State(State.completed, "Done");         // A 0 size chunk means we already have the whole file
+			if (i == -1) throw new OldState(OldState.couldNot,  "Size Unknown"); // Unable to read the size number
+			if (i ==  0) throw new OldState(OldState.completed, "Done");         // A 0 size chunk means we already have the whole file
 
 			// Save the size and try again now to get the data
 			chunk = i;
@@ -262,16 +262,16 @@ public class Get {
 	 * 
 	 * @return A State object that describes our state right now
 	 */
-	public State state() {
+	public OldState state() {
 
 		// If we're closed, that's our state, return it
 		if (closed != null) return closed;
 
 		// If our Tube is opening, so are we
-		if (tube.state().state == State.opening) return State.opening();
+		if (tube.state().state == OldState.opening) return OldState.opening();
 		
 		// Otherwise, our Tube is either doing, or closed because of a socket exception
-		return new State(State.doing); // Say we're doing, we'll notice our Tube's closed state on our next pulse
+		return new OldState(OldState.doing); // Say we're doing, we'll notice our Tube's closed state on our next pulse
 	}
 
 	/**
@@ -279,18 +279,18 @@ public class Get {
 	 * 
 	 * @param closed A State object that tells how and why we closed
 	 */
-	public void close(State closed) {
+	public void close(OldState closed) {
 		
 		// Only let us close once, and save the given final closed state
 		if (state().isClosed()) return;
 		this.closed = closed;
 
 		// Cancel our Tube
-		tube.close(State.cancelled()); // Have our Tube close its socket and remove itself from the program's list of Tube objects
+		tube.close(OldState.cancelled()); // Have our Tube close its socket and remove itself from the program's list of Tube objects
 	}
 
 	/** Our final state that tells how and why we closed, or null if we're not closed yet. */
-	private State closed;
+	private OldState closed;
 
 	// -------- Speed and time information from our Tube --------
 	
@@ -303,12 +303,12 @@ public class Get {
 	 * The Time when we tried to connect to the Web server.
 	 * How long we've been waiting for our connection to go through.
 	 */
-	public Time attemptTime() {
+	public OldTime attemptTime() {
 		return tube.attempt.copy();
 	}
 	
 	/** The Time when we last heard from the Web server. */
-	public Time responseTime() {
+	public OldTime responseTime() {
 		return tube.response();
 	}
 }

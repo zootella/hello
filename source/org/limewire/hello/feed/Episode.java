@@ -3,7 +3,7 @@ package org.limewire.hello.feed;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.limewire.hello.base.model.Model;
+import org.limewire.hello.base.state.Model;
 
 import com.sun.syndication.feed.module.itunes.EntryInformation;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -80,27 +80,42 @@ public class Episode {
 
 		/** Episode title. */
 		public String episode() {
-			return entry.getTitle();
+			if (entry.getTitle() != null)
+				return entry.getTitle();
+			else
+				return "";
 		}
 
 		/** Episode iTunes duration time. */
 		public String time() {
-			return info.getDuration().toString();
+			if (info.getDuration() != null)
+				return info.getDuration().toString();
+			else
+				return "";
 		}
 
 		/** Episode release date. */
 		public String date() {
-			return entry.getPublishedDate().toString();
+			if (entry.getPublishedDate() != null)
+				return entry.getPublishedDate().toString();
+			else
+				return "";
 		}
 
 		/** Episode iTunes subtitle description. */
 		public String description() {
-			return info.getSubtitle();
+			if (info.getSubtitle() != null)
+				return info.getSubtitle();
+			else
+				return "";
 		}
 
 		/** Episode file download web address. */
 		public String address() {
-			return entry.getLink();
+			if (entry.getLink() != null)
+				return entry.getLink();
+			else
+				return "";
 		}
 	}
 	

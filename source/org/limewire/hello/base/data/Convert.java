@@ -4,7 +4,7 @@ package org.limewire.hello.base.data;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
-import org.limewire.hello.base.state.PlatformException;
+import org.limewire.hello.base.exception.PlatformException;
 
 public class Convert {
 

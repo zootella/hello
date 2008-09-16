@@ -7,8 +7,8 @@ import java.util.TreeMap;
 
 import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.MessageException;
 
 public class BencodedDictionary extends Bencoded {
 	

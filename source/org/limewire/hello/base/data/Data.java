@@ -5,9 +5,9 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 
 import org.limewire.hello.base.encode.Encode;
-import org.limewire.hello.base.encode.Sha;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.CodeException;
+import org.limewire.hello.base.encode.Hash;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.CodeException;
 
 public class Data implements Comparable<Data> {
 	
@@ -108,15 +108,15 @@ public class Data implements Comparable<Data> {
 		} catch (ChopException e) { throw new CodeException(); } // There is a mistake in the code in this try block
 	}
 
-	/** Clip out the first size bytes of this Data, start(b, 3) is DDDddddddd. */
+	/** Clip out the first size bytes of this Data, start(3) is DDDddddddd. */
 	public Data start(int size) throws ChopException { return clip(0, size); }
-	/** Clip out the last size bytes of this Data, end(b, 3) is dddddddDDD. */
+	/** Clip out the last size bytes of this Data, end(3) is dddddddDDD. */
 	public Data end(int size) throws ChopException { return clip(size() - size, size); }
-	/** Clip out the bytes after index i in this Data, after(b, 3) is dddDDDDDDD. */
+	/** Clip out the bytes after index i in this Data, after(3) is dddDDDDDDD. */
 	public Data after(int i) throws ChopException { return clip(i, size() - i); }
-	/** Chop the last size bytes off the end of this Data, returning the start before them, chop(b, 3) is DDDDDDDddd. */
+	/** Chop the last size bytes off the end of this Data, returning the start before them, chop(3) is DDDDDDDddd. */
 	public Data chop(int size) throws ChopException { return clip(0, size() - size); }
-	/** Clip out part this Data, clip(b, 5, 3) is dddddDDDdd. */
+	/** Clip out part this Data, clip(5, 3) is dddddDDDdd. */
 	public Data clip(int i, int size) throws ChopException {
 
 		// Make sure the requested index and size fits inside this Data
@@ -343,7 +343,7 @@ public class Data implements Comparable<Data> {
 	public String strike() { return Encode.strike(this); }
 
 	/** Compute the SHA1 hash of this Data, return the 20-byte, 160-bit hash value. */
-	public Data hash() { return Sha.hash(this); }
+	public Data hash() { return Hash.hash(this); }
 	
 	// -------- Empty and random --------
 	

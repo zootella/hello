@@ -1,8 +1,8 @@
 package org.limewire.hello.base.setting;
 
 import org.limewire.hello.base.data.Outline;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.Path;
-import org.limewire.hello.base.state.MessageException;
 
 
 public class PathSetting {

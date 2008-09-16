@@ -3,9 +3,9 @@ package org.limewire.hello.bittorrent.message;
 import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Number;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.pattern.SprayPattern;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.MessageException;
 import org.limewire.hello.bittorrent.meta.Meta;
 
 

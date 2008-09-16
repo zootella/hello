@@ -8,9 +8,9 @@ import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Number;
 import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.data.TextSplit;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.Name;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.MessageException;
 
 public class HeaderGroup {
 	

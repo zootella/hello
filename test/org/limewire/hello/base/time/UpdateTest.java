@@ -6,8 +6,8 @@ import java.awt.Frame;
 import javax.swing.JDialog;
 
 import org.junit.Test;
-import org.limewire.hello.base.time.Update;
-import org.limewire.hello.base.time.UpdateReceive;
+import org.limewire.hello.base.state.Receive;
+import org.limewire.hello.base.state.old.OldUpdate;
 import org.limewire.hello.base.user.Dialog;
 
 public class UpdateTest {
@@ -41,14 +41,14 @@ public class UpdateTest {
 		
 		public Parent() {
 			
-			update = new Update(new MyUpdateReceive());
+			update = new OldUpdate(new MyReceive());
 			child = new Child(update);
 		}
 		
-		public Update update;
+		public OldUpdate update;
 		public Child child;
 		
-		private class MyUpdateReceive implements UpdateReceive {
+		private class MyReceive implements Receive {
 			public void receive() {
 				
 				child.finished();
@@ -62,11 +62,11 @@ public class UpdateTest {
 	
 	private class Child {
 		
-		public Child(Update update) {
+		public Child(OldUpdate update) {
 			this.update = update;
 		}
 		
-		private Update update;
+		private OldUpdate update;
 		
 		public void finished() {
 			

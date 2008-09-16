@@ -5,3 +5,6 @@ package org.limewire.hello.base.file;
  * When you catch a FileException, give up and tell the user it's the disk's fault.
  */
 public class FileException extends Exception {} // Methods that throw FileException have to declare it
+
+//TODO rename DiskException
+//TODO why not just use IOException

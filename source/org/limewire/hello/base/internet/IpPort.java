@@ -10,8 +10,10 @@ import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Number;
 import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.data.TextSplit;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.MessageException;
+
+//TODO make sure this is immutable, you're accessing it in SwingWorker threads
 
 public class IpPort implements Comparable<IpPort> {
 	

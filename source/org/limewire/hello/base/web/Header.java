@@ -3,7 +3,7 @@ package org.limewire.hello.base.web;
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.data.TextSplit;
-import org.limewire.hello.base.state.ChopException;
+import org.limewire.hello.base.exception.ChopException;
 
 
 public class Header {

@@ -1,48 +1,46 @@
 package org.limewire.hello.base.state;
 
 /** Have your object extend Close so the program will notice if you forget to later call its close() method. */
-public class Close {
+public abstract class Close {
+	
+	// Core
 
-	// -------- The core of an object that extends Close --------
-	
-	/** true once this object that extends Close has been closed, and we've counted it. */
-	private boolean counted;
-	
 	/**
 	 * Count that the program has made another new object that needs to be closed.
-	 * This method automatically runs before execution enters the constructor of an object that extends Close.
+	 * This automatically runs before execution enters the constructor of an object that extends Close.
 	 */
 	public Close() {
-		open++; // Count one more object open, this new one that extends Close
+		programOpen++; // Count the program has one more object open, this new one that extends Close
 	}
 	
+	/** true once this object that extends Close has been closed, and promises to not change again. */
+	public boolean closed() { return objectClosed; }
+	private boolean objectClosed; // Private so objects that extend Close can't get to this
+
+	/** Call close() on an object to have it close objects inside, put away resources, and never change again. */
+	public abstract void close(); // Your object that extends Close must have this method
+
 	/**
-	 * Count that the program has closed an object.
-	 * Call count() at the end of your object's close() method.
+	 * Mark this object that extends Close as closed, and only do this once.
+	 * Start your close() method with the code if (already()) return;.
+	 * The first time already() runs, it marks this object as closed and returns false.
+	 * Try calling it again, and it will just return true.
 	 */
-	protected void count() { // protected only lets your object that extends Close call count()
-		
-		// Only make it past here once for this object that extends Close
-		if (counted) {
-			System.out.println("The program called close() on the same object a second time!"); // Warn the programmer
-			//TODO replace this with an exception that crashes the program with a dialog box
-			return;
-		}
-		counted = true;
-		
-		// Count one fewer object open, this one that extends Close
-		open--;
+	public boolean already() {
+		if (objectClosed) return true; // We're already closed, return true to return from the close() method
+		objectClosed = true;           // Mark this object that extends Close as now permanently closed
+		programOpen--;                 // Count the program has one fewer object it needs to close
+		return false;                  // Return false to run the contents of the close() method this first and only time
 	}
 
-	// -------- The static count the whole program shares --------
+	// Program
 	
 	/** The total number of objects the program has made that still need to be closed. */
-	private static int open;
+	private static int programOpen;
 
-	/** Before the program closes, call Close.check() to make sure every object with a close() method had it run. */
-	public static void check() {
-		if (open != 0)
-			System.out.println("The program closed without calling close() on " + open + " objects!"); // Warn the programmer
-			//TODO replace this with an exception that crashes the program with a dialog box
+	/** Before the program closes, call Close.checkAll() to make sure every object with a close() method had it run. */
+	public static void checkAll() {
+		if (programOpen != 0)
+			throw new IllegalStateException("program closed with " + programOpen + " open objects");
 	}
 }

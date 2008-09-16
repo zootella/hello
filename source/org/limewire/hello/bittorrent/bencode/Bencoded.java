@@ -7,8 +7,8 @@ import java.util.Set;
 
 import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.MessageException;
 
 // this lets you call print() on a bencoded object, without having to know what kind of bencoded object it is
 // there is no such thing as a Bencoded object in the program

@@ -2,12 +2,12 @@ package org.limewire.hello.base.setting;
 
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Outline;
+import org.limewire.hello.base.exception.ChopException;
+import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.FileException;
 import org.limewire.hello.base.file.Here;
 import org.limewire.hello.base.file.Path;
-import org.limewire.hello.base.state.ChopException;
-import org.limewire.hello.base.state.MessageException;
 
 
 public class Store {

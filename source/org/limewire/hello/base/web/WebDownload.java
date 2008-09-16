@@ -7,9 +7,13 @@ import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.file.PathName;
 import org.limewire.hello.base.file.Save;
 import org.limewire.hello.base.internet.Ip;
-import org.limewire.hello.base.state.State;
+import org.limewire.hello.base.later.DomainLater;
+import org.limewire.hello.base.state.Receive;
+import org.limewire.hello.base.state.Update;
+import org.limewire.hello.base.state.old.OldState;
+import org.limewire.hello.base.state.old.OldUpdate;
+import org.limewire.hello.base.time.OldTime;
 import org.limewire.hello.base.time.Time;
-import org.limewire.hello.base.time.Update;
 import org.limewire.hello.base.user.Describe;
 
 
@@ -56,7 +60,7 @@ public class WebDownload {
 	/** true once the user gives us permission to get started. */
 	private boolean permission;
 	/** The Dns object we are using to find out the Web server's IP address. */
-	private Dns dns;
+	private DomainLater dns;
 	/** The Get object we are using to request the file from the Web server. */
 	private Get get;
 	
@@ -90,7 +94,15 @@ public class WebDownload {
 	}
 
 	// -------- Periodically pulse this object to move things forward --------
-
+	
+	private Update hereup = new Update(new MyReceive());
+	private class MyReceive implements Receive {
+		public void receive() {
+			
+			pulse();
+		}
+	}
+	
 	/**
 	 * See what's happened and move things to the next step.
 	 * The program periodically calls pulse() on this object.
@@ -108,7 +120,7 @@ public class WebDownload {
 			// We have permission to get started
 			if (permission) {
 				if (ip == null) {                                                     // We don't know the Web server's IP address yet
-					if (dns == null) dns = new Dns(url.site);                         // If we don't have our Dns object yet, make it
+					if (dns == null) dns = new DomainLater(hereup, url.site);        // If we don't have our Dns object yet, make it
 				} else {                                                              // We know the Web server's IP address
 					if (save == null) save = new Save(folder);                        // If we don't have our temporary file yet, open it
 					if (get == null) get = new Get(web.internet, url, ip, save.file); // If we don't have our Get request yet, make it
@@ -116,14 +128,11 @@ public class WebDownload {
 			}
 			
 			// We have a Dns object trying to figure out the IP address
-			if (dns != null) {
-				State state = dns.state();                               // Find out what it's doing right now
-				if (state.state == State.completed) {                    // It finished successfully
-					ip = dns.ip;                                         // Save the IP address and discard the object
+			if (dns != null && dns.closed()) {
+				try {
+					ip = dns.result();
 					dns = null;
-				} else if (state.state == State.couldNot) {              // It had to give up
-					throw new State(State.couldNot, "Server Not Found"); // Close this Download as "Server Not Found"
-				}
+				} catch (Exception e) { throw new OldState(OldState.couldNot, "Server Not Found"); }
 			}
 
 			// We have a Get object downloading data from the Web server
@@ -132,13 +141,13 @@ public class WebDownload {
 				// Pulse it and grab information from it
 				get.pulse();
 				if (get.response != null && response == null) response = get.response; // Grab response headers
-				attempt = Time.recent(attempt, get.attemptTime()); // Get the time we attempted to connect to the Web server
+				attempt = OldTime.recent(attempt, get.attemptTime()); // Get the time we attempted to connect to the Web server
 				
 				// Our Get object is closed
 				if (get.state().isClosed()) {
 					
 					// Get its closed outcome state to find out how it closed
-					State s = get.state();
+					OldState s = get.state();
 					
 					/*
 					 * Here are the possible states our Get and this Download can be closed by:
@@ -157,11 +166,11 @@ public class WebDownload {
 					 */
 					
 					// If our Get closed because of a socket or file exception, close this Download as couldNot with a user message about sockets or files
-					if (s.state == State.socketException) throw new State(State.couldNot, "Cannot Connect");
-					if (s.state == State.fileException)   throw new State(State.couldNot, "Cannot Save");
+					if (s.state == OldState.socketException) throw new OldState(OldState.couldNot, "Cannot Connect");
+					if (s.state == OldState.fileException)   throw new OldState(OldState.couldNot, "Cannot Save");
 					
 					// If our Get finished downloading the file, rename it to the saved to location
-					if (s.state == State.completed) save.save(new PathName(name()), false); // false to not open the file for uploading
+					if (s.state == OldState.completed) save.save(new PathName(name()), false); // false to not open the file for uploading
 					
 					// Close us with the same State outcome that closed our Get object
 					throw s;
@@ -169,12 +178,12 @@ public class WebDownload {
 			}
 
 		// One of the methods we called realized we are done, close this Download object with the reason it found
-		} catch (State state) {
+		} catch (OldState state) {
 			close(state);
 		
 		// Any file problem closes this Download, showing "Cannot Save" to the user
 		} catch (FileException e) {
-			close(new State(State.couldNot, "Cannot Save"));
+			close(new OldState(OldState.couldNot, "Cannot Save"));
 		}
 	}
 
@@ -199,14 +208,14 @@ public class WebDownload {
 	 * 
 	 * @return A State object that describes our state right now
 	 */
-	public State state() {
+	public OldState state() {
 
 		// If we're closed, that's our final state, return it
 		if (closed != null) return closed;
 
 		// We're paused until the user gives us permission to start, then we're doing
-		if (permission) return State.doing();
-		else return State.paused();
+		if (permission) return OldState.doing();
+		else return OldState.paused();
 	}
 
 	/**
@@ -214,7 +223,7 @@ public class WebDownload {
 	 * 
 	 * @param closed The State to set as our closed outcome
 	 */
-	public void close(State closed) {
+	public void close(OldState closed) {
 		
 		// Only let us close once, and save the given final closed state
 		if (state().isClosed()) return;
@@ -222,15 +231,15 @@ public class WebDownload {
 		
 		// Close all our objects and resources
 		if (save != null) save.close();                 // Close and delete our temporary file
-		if (get  != null) get.close(State.cancelled()); // Cancel our Get object, making it disconnect its TCP socket connection
-		if (dns  != null) dns.close(State.cancelled()); // Cancel our Dns object, making it stop DNS Internet communications
+		if (get  != null) get.close(OldState.cancelled()); // Cancel our Get object, making it disconnect its TCP socket connection
+		if (dns  != null) dns.close(); // Cancel our Dns object, making it stop DNS Internet communications
 		
 		// Remove us from the program's list of Download objects
 		web.list.remove(this);
 	}
 
 	/** Our final state that tells how and why we closed, or null if we're not closed yet. */
-	private State closed;
+	private OldState closed;
 	
 	// -------- Progress and status information --------
 
@@ -272,17 +281,17 @@ public class WebDownload {
 	 * This is when we most recently made a connection attempt.
 	 * Use this to keep from bothering the Web server too frequently.
 	 */
-	public Time attemptTime() { return attempt; }
-	private Time attempt; // pulse() keeps this up to date
+	public OldTime attemptTime() { return attempt; }
+	private OldTime attempt; // pulse() keeps this up to date
 
 	/**
 	 * The Time we last heard from the Web server.
 	 * This is when any of our connections most recently connected or downloaded something.
 	 * Use this to notice when our connections to the Web server have died.
 	 */
-	public Time responseTime() {
+	public OldTime responseTime() {
 		if (get != null) return get.responseTime();
-		else return new Time(); // No Get, return an unset Time
+		else return new OldTime(); // No Get, return an unset Time
 	}
 	
 	/** How big the file we're downloading is, in bytes, or -1 if we don't know. */
@@ -293,7 +302,7 @@ public class WebDownload {
 		if (response != null) size = response.number(Header.contentLength);
 		
 		// If that didn't work, and we saved the whole file, get its size
-		if (size == -1 && state().state == State.completed && get != null) size = get.saved;
+		if (size == -1 && state().state == OldState.completed && get != null) size = get.saved;
 		return size;
 	}
 
@@ -323,7 +332,7 @@ public class WebDownload {
 	public String describeStatus() {
 		
 		// Get our current state, speed, and predicted arrival time
-		State state = state();
+		OldState state = state();
 		int speed = speed();
 		int arrival = arrival(speed);
 
@@ -331,7 +340,7 @@ public class WebDownload {
 		String s = ""; // If we're pending, we'll return s blank
 		
 		// Getting
-		if (state.state == State.doing) {
+		if (state.state == OldState.doing) {
 
 			// We're stuck waiting for a Web server that won't respond, say "No response for 5 sec"
 			if (responseTime().expired(Describe.wait * Time.second, false)) { // If responseTime() was never set, return false
@@ -351,11 +360,11 @@ public class WebDownload {
 			}
 
 		// Done
-		} else if (state.state == State.completed) {
+		} else if (state.state == OldState.completed) {
 			s = "Done";
 
 		// Cannot
-		} else if (state.state == State.couldNot) {
+		} else if (state.state == OldState.couldNot) {
 			
 			// Get the text from the closed State
 			s = state.user; // Like "Not Found" from the response headers or "Cannot Save" if our Get got a file exception

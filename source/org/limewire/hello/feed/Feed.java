@@ -5,17 +5,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.limewire.hello.base.model.Model;
+import org.limewire.hello.base.later.FeedLater;
+import org.limewire.hello.base.state.Close;
+import org.limewire.hello.base.state.Model;
+import org.limewire.hello.base.state.Receive;
+import org.limewire.hello.base.state.Update;
+import org.limewire.hello.base.state.old.OldUpdate;
 import org.limewire.hello.base.time.Once;
-import org.limewire.hello.base.time.Update;
-import org.limewire.hello.base.time.UpdateReceive;
-import org.limewire.hello.base.web.GetFeed;
 import org.limewire.hello.base.web.Url;
 
 import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
 
 /** A RSS feed the program is subscribed to. */
-public class Feed {
+public class Feed extends Close {
 
 	// -------- Feed --------
 
@@ -35,20 +38,19 @@ public class Feed {
 		
 		// Update objects
 		model = new MyModel();                      // Make our inner Model object to tells views above when we've changed
-		update = new Update(new MyUpdateReceive()); // Make our inner Update object to find out when objects beneath have changed
-		once = new Once();                          // Make a Once object to only do something one time
+		update = new Update(new MyReceive()); // Make our inner Update object to find out when objects beneath have changed
 		
 		// Tasks
-		get = new GetFeed(update, url.toString()); // Make a GetFeed to download and parse the feed
+		later = new FeedLater(update, url); // Make a FeedUpdate to download and parse the feed
 	}
 	
 	/** Close disk and net resources and disconnect from other objects. */
 	public void close() {
+		if (already());
 		model.close();                   // Tell all the View objects looking at us to vanish
 		list.remove(this);               // Remove the Feed from the program's list of them
 		for (Episode episode : episodes) // Close all our episodes
 			episode.close();
-		update.close();                  // Close our internal objects so they free their resources
 	}
 
 	/**
@@ -56,6 +58,7 @@ public class Feed {
 	 * We don't have to add ourselves to it, but are responsible for removing ourselves from it.
 	 */
 	private FeedList list;
+	
 	
 	/** The web address of the XML RSS feed we download and parse. */
 	public final Url url;
@@ -68,11 +71,11 @@ public class Feed {
 	
 	/** Our Update which objects below use to tell us when they've finished things we've asked them to do. */
 	public Update update;
-	/** Only look at a parsed feed once. */
-	private Once once;
 	
 	/** A GetFeed object downloads an RSS feed from the web and parses the XML. */
-	private final GetFeed get;
+	private FeedLater later;
+	private SyndFeed feed;
+	private Exception exception;
 	
 	// -------- Methods --------
 	
@@ -87,26 +90,29 @@ public class Feed {
 	// now, the tab only updates when the selection chagnes, not when the feed finishes parsing
 	
 	// -------- Update --------
+	
 
 	// When a worker object we gave our Update has progressed or completed, it calls this receive() method
-	private class MyUpdateReceive implements UpdateReceive {
+	private class MyReceive implements Receive {
 		public void receive() {
+			if (closed()) return;
 			
-			// Our GetFeed object just finished
-			if (get.state().isClosed() && once.once()) { // Only enter here once
-
-				// It parsed something
-				if (get.feed != null) {
+			try {
+				
+				if (later.closed()) {
+					SyndFeed feed = later.result();
+					later = null;
 					
 					// Make an Entry in our list for each SyndEntry it found when parsing
-					List<SyndEntry> entries = get.feed.getEntries();
+					List<SyndEntry> entries = later.result().getEntries();
 					for (SyndEntry entry : entries)
 						episodes.add(new Episode(me(), entry));
+					
+					// Tell our Model we've changed
+					model.send();
 				}
 
-				// Tell our Model we've changed
-				model.send();
-			}
+			} catch (Exception e) { exception = e; close(); }
 		}
 	}
 	
@@ -131,21 +137,21 @@ public class Feed {
 		
 		/** Status text. */
 		public String status() {
-			if (get.feed != null) return "Parsed";
-			else if (!get.state().isClosed()) return "Getting";
+			if (feed != null) return "Parsed";
+			else if (!later.closed()) return "Getting";
 			else return "Cannot";
 		}
 
 		/** Podcast title. */
 		public String name() {
-			if (get.feed == null) return "";
-			else return get.feed.getTitle();
+			if (feed == null) return "";
+			else return feed.getTitle();
 		}
 
 		/** Podcast description. */
 		public String description() {
-			if (get.feed == null) return "";
-			else return get.feed.getDescription();
+			if (feed == null) return "";
+			else return feed.getDescription();
 		}
 
 		/** Web address to the RSS feed. */

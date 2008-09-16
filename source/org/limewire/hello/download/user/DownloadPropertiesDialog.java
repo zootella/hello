@@ -7,8 +7,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
-import org.limewire.hello.base.model.View;
-import org.limewire.hello.base.state.Close;
+import org.limewire.hello.base.state.View;
+import org.limewire.hello.base.state.old.OldClose;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.Dialog;
@@ -17,7 +17,7 @@ import org.limewire.hello.base.user.SelectTextArea;
 import org.limewire.hello.download.Download;
 
 /** The Download Properties dialog box on the screen that shows the user the properties of a download. */
-public class DownloadPropertiesDialog extends Close {
+public class DownloadPropertiesDialog extends OldClose {
 	
 	// -------- Dialog --------
 

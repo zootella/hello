@@ -1,13 +1,17 @@
 package org.limewire.hello.all;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.List;
 
-import org.limewire.hello.base.state.MessageException;
+import org.limewire.hello.base.exception.MessageException;
+import org.limewire.hello.base.internet.Ip;
+import org.limewire.hello.base.state.old.OldClose;
 import org.limewire.hello.base.web.Url;
 
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -20,7 +24,20 @@ public class Snippet {
 
 	// -------- Snippet --------
 	
+	
+	
 	public static void snippet() {
+		
+		
+		
+		ByteBuffer buffer = ByteBuffer.allocate(5);
+		
+		buffer.position(2);
+		buffer.limit(2);
+		
+		
+		
+		
 
 		
 		
