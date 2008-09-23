@@ -1,9 +1,8 @@
 package org.limewire.hello.base.later;
 
-import java.nio.channels.SocketChannel;
-
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
+import org.limewire.hello.base.internet.Socket;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.time.Move;
 
@@ -12,7 +11,7 @@ public class DownloadLater extends Later {
 	// Make
 
 	/** Download 1 or more bytes from socket to bin, don't look at bin until this is closed. */
-	public DownloadLater(Update above, SocketChannel socket, Bin bin) {
+	public DownloadLater(Update above, Socket socket, Bin bin) {
 		this.above = above; // We'll tell above when we're done
 		
 		// Save the input
@@ -24,7 +23,7 @@ public class DownloadLater extends Later {
 	}
 
 	/** The socket we download from. */
-	private final SocketChannel socket;
+	private final Socket socket;
 	/** The Bin we put the data in. */
 	private final Bin bin;
 

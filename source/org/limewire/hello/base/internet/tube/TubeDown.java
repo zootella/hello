@@ -12,7 +12,7 @@ import org.limewire.hello.base.time.Now;
 
 public class TubeDown extends OldClose {
 	
-	public TubeDown(Socket tube) {
+	public TubeDown(Tube tube) {
 		this.tube = tube;
 		update = new Update(new MyReceive());
 		bay = new Bay();
@@ -22,7 +22,7 @@ public class TubeDown extends OldClose {
 		if (later != null) later.close();
 	}
 	
-	private final Socket tube;
+	private final Tube tube;
 	
 	private DownloadLater later;
 	/** only touch bin when later is null. */

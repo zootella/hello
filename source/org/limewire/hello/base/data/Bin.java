@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.FileChannel;
-import java.nio.channels.SelectableChannel;
-import java.nio.channels.SocketChannel;
 
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.CodeException;
+import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.Socket;
 import org.limewire.hello.base.pattern.Stripe;
 import org.limewire.hello.base.time.Move;
 import org.limewire.hello.base.time.Now;
@@ -79,6 +78,12 @@ public class Bin {
 	public boolean isFull() { return size() == capacity(); }
 	
 	// Change
+
+	/** Move data from source to destination, do nothing if either are null. */
+	public static void move(Bin source, Bin destination) {
+		if (source == null || destination == null) return;
+		destination.add(source); // Move data from the source Bin to the destination Bin
+	}
 
 	/** Move as much data as fits from bin to this one. */
 	public void add(Bin bin) {
@@ -189,22 +194,22 @@ public class Bin {
 	// File
 	
 	/** Add 1 byte or more from the start of stripe in file to this Bin, or throw an IOException. */
-	public Move read(FileChannel file, Stripe stripe) throws IOException {
+	public Move read(File file, Stripe stripe) throws IOException {
 		stripe = stripe.begin(space()); // Don't try to read more bytes than we have space for
 		ByteBuffer space = in((int)stripe.size);
 		Now start = new Now();
-		int did = file.read(space, stripe.i); // Read from the file at i and move space.position forward
+		int did = file.file.getChannel().read(space, stripe.i); // Read from the file at i and move space.position forward
 		inCheck(did, space);
 		inDone(space);
 		return new Move(start, stripe, did, null);
 	}
 	
 	/** Move 1 byte or more from this Bin to stripe in file, or throw an IOException. */
-	public Move write(FileChannel file, Stripe stripe) throws IOException {
+	public Move write(File file, Stripe stripe) throws IOException {
 		stripe = stripe.begin(size()); // Don't try to write more bytes than we have
 		ByteBuffer data = out((int)stripe.size);
 		Now start = new Now();
-		int did = file.write(data, stripe.i); // Write to the file at i and move data.position forward
+		int did = file.file.getChannel().write(data, stripe.i); // Write to the file at i and move data.position forward
 		outCheck(did, data);
 		outDone(data);
 		return new Move(start, stripe, did, null);
@@ -213,10 +218,10 @@ public class Bin {
 	// Socket
 	
 	/** Download 1 or more bytes from socket, adding it to this Bin, or throw an IOException. */
-	public Move download(SocketChannel socket) throws IOException {
+	public Move download(Socket socket) throws IOException {
 		ByteBuffer space = in(); // We must have room for at least 1 byte
 		Now start = new Now();
-		int did = socket.read(space); // Download data and move position forward
+		int did = socket.channel.read(space); // Download data and move position forward
 		inCheck(did, space);
 		inDone(space);
 		return new Move(start, null, did, null);
@@ -227,10 +232,10 @@ public class Bin {
 	 * Uploads as much data as socket will take in one call.
 	 * Removes what's uploaded from this Bin.
 	 */
-	public Move upload(SocketChannel socket) throws IOException {
+	public Move upload(Socket socket) throws IOException {
 		ByteBuffer data = out();
 		Now start = new Now();
-		int did = socket.write(data); // Upload data and move position forward
+		int did = socket.channel.write(data); // Upload data and move position forward
 		outCheck(did, data);
 		outDone(data);
 		return new Move(start, null, did, null);
@@ -268,28 +273,18 @@ public class Bin {
 	// Direct
 	
 	/** Download data directly from socket to file, filling the start of stripe there, or throw an IOException. */
-	public static Move down(SocketChannel socket, FileChannel file, Stripe stripe) throws IOException {
+	public static Move down(Socket socket, File file, Stripe stripe) throws IOException {
 		Now start = new Now();
-		long did = file.transferFrom(socket, stripe.i, stripe.size); // Download up to size bytes to the file at i
+		long did = file.file.getChannel().transferFrom(socket.channel, stripe.i, stripe.size); // Download up to size bytes to the file at i
 		if (did < 1) throw new IOException("did " + did); // Wrote nothing
 		return new Move(start, stripe, did, null);
 	}
 
 	/** Upload data from the start of stripe in file directly to socket, or throw an IOException. */
-	public static Move up(SocketChannel socket, FileChannel file, Stripe stripe) throws IOException {
+	public static Move up(Socket socket, File file, Stripe stripe) throws IOException {
 		Now start = new Now();
-		long did = file.transferTo(stripe.i, stripe.size, socket); // Upload up to size bytes from the file at i
+		long did = file.file.getChannel().transferTo(stripe.i, stripe.size, socket.channel); // Upload up to size bytes from the file at i
 		if (did < 1) throw new IOException("did " + did); // Wrote nothing
 		return new Move(start, stripe, did, null);
-	}
-	
-	// Close
-	
-	/** Close the given channel, takes null and ignores exception. */
-	public static void close(SelectableChannel channel) {
-		if (channel == null) return; // Nothing to close
-		try {
-			channel.close(); // It's OK if channel is already closed TODO does this block?
-		} catch (IOException e) {} // Ignore exception
 	}
 }

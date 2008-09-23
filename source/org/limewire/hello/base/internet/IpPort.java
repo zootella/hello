@@ -14,6 +14,7 @@ import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.MessageException;
 
 //TODO make sure this is immutable, you're accessing it in SwingWorker threads
+//TODO use the separate Port class
 
 public class IpPort implements Comparable<IpPort> {
 	

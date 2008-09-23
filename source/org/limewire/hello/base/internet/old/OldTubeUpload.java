@@ -99,7 +99,7 @@ public class OldTubeUpload {
 	public void selectUpload() throws IOException {
 		
 		// Move data from the last Bay in our chain to our channel
-		int n = last.upload(tube.channel);
+		int n = last.oldUpload(tube.channel);
 		speed.add(n);               // Report the distance we just travelled to our Speed object
 		if (n != 0) transfer.set(); // If our channel took some data, set the last transfer time to now
 

@@ -101,7 +101,7 @@ public class OldTubeDownload {
 		if (last.size() >= Bay.big) return; // Don't get more data, as the last Bay in our chain would grow huge
 		
 		// Move data from our channel to the first Bay in our chain
-		int n = first.download(tube.channel);
+		int n = first.oldDownload(tube.channel);
 		speed.add(n);               // Report the distance we just travelled to our Speed object
 		if (n != 0) transfer.set(); // If we got data, set the last transfer time to now
 		

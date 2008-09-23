@@ -24,7 +24,7 @@ public class Move {
 	public final Stripe did;
 	
 	/**
-	 * The file Stripe this Move didn't do, ask - did.
+	 * The file Stripe this Move didn't do, ask minus did.
 	 * null if this Move is about an Internet transfer with just sockets and buffers involved.
 	 */
 	public Stripe remain() {

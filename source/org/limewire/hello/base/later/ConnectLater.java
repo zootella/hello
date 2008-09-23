@@ -1,9 +1,8 @@
 package org.limewire.hello.base.later;
 
-import java.nio.channels.SocketChannel;
-
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.Socket;
 import org.limewire.hello.base.state.Update;
 
 public class ConnectLater extends Later {
@@ -27,23 +26,22 @@ public class ConnectLater extends Later {
 	// Result
 	
 	/** The socket we connected, its yours to use and then close, or throws the exception that made us give up. */
-	public SocketChannel result() throws Exception { return (SocketChannel)check(socket); }
-	private SocketChannel socket;
+	public Socket result() throws Exception { return (Socket)check(socket); }
+	private Socket socket;
 
 	// Inside
 	
 	/** Our SwingWorker with a worker thread that runs our code that blocks. */
 	private class MySwingWorker extends SwingWorker<Void, Void> {
 		private Exception workException; // References the worker thread can safely set
-		private SocketChannel workSocket;
+		private Socket workSocket;
 
 		// A worker thread will call this method
 		public Void doInBackground() {
 			try {
 				
 				// Make and connect a new socket to the given IP address and port number
-				workSocket = SocketChannel.open();
-				workSocket.connect(ipPort.toInetSocketAddress());
+				workSocket = new Socket(ipPort);
 				
 			} catch (Exception e) { exception = e; } // Catch the exception our code threw
 			return null;

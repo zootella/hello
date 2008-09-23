@@ -1,9 +1,8 @@
 package org.limewire.hello.base.later;
 
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-
 import org.jdesktop.swingworker.SwingWorker;
+import org.limewire.hello.base.internet.Server;
+import org.limewire.hello.base.internet.Socket;
 import org.limewire.hello.base.state.Update;
 
 public class AcceptLater extends Later {
@@ -11,7 +10,7 @@ public class AcceptLater extends Later {
 	// Make
 
 	/** Wait for a peer to make a TCP socket connection to server. */
-	public AcceptLater(Update above, ServerSocketChannel server) {
+	public AcceptLater(Update above, Server server) {
 		this.above = above; // We'll tell above when we're done
 		
 		// Save the input
@@ -22,27 +21,27 @@ public class AcceptLater extends Later {
 	}
 	
 	/** Our bound server socket a peer will connect to. */
-	private final ServerSocketChannel server;
+	private final Server server;
 
 	// Result
 	
 	/** The socket that connected to server, it's yours to use and then close, or throws the exception that made us give up. */
-	public SocketChannel result() throws Exception { return (SocketChannel)check(socket); }
-	private SocketChannel socket;
+	public Socket result() throws Exception { return (Socket)check(socket); }
+	private Socket socket;
 
 	// Inside
 	
 	/** Our SwingWorker with a worker thread that runs our code that blocks. */
 	private class MySwingWorker extends SwingWorker<Void, Void> {
 		private Exception workException; // References the worker thread can safely set
-		private SocketChannel workSocket;
+		private Socket workSocket;
 
 		// A worker thread will call this method
 		public Void doInBackground() {
 			try {
 
 				// Wait here until a peer connects to us
-				workSocket = server.accept();
+				workSocket = new Socket(server.channel.accept());
 				
 			} catch (Exception e) { exception = e; } // Catch the exception our code threw
 			return null;

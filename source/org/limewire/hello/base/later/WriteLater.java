@@ -1,9 +1,8 @@
 package org.limewire.hello.base.later;
 
-import java.nio.channels.FileChannel;
-
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
+import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.pattern.Stripe;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.time.Move;
@@ -13,7 +12,7 @@ public class WriteLater extends Later {
 	// Make
 
 	/** Write 1 or more bytes from bin to stripe in file, don't look at bin until this is closed. */
-	public WriteLater(Update above, FileChannel file, Stripe stripe, Bin bin) {
+	public WriteLater(Update above, File file, Stripe stripe, Bin bin) {
 		this.above = above; // We'll tell above when we're done
 		
 		// Save the input
@@ -26,7 +25,7 @@ public class WriteLater extends Later {
 	}
 
 	/** The file we write to. */
-	private final FileChannel file;
+	private final File file;
 	/** We write at least 1 byte to the start of stripe. */
 	public final Stripe stripe;
 	/** The Bin we put the data in. */

@@ -1,7 +1,8 @@
 package org.limewire.hello.base.web;
 
+import java.io.IOException;
+
 import org.limewire.hello.base.data.Text;
-import org.limewire.hello.base.file.FileException;
 import org.limewire.hello.base.file.Name;
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.file.PathName;
@@ -11,7 +12,6 @@ import org.limewire.hello.base.later.DomainLater;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.state.old.OldState;
-import org.limewire.hello.base.state.old.OldUpdate;
 import org.limewire.hello.base.time.OldTime;
 import org.limewire.hello.base.time.Time;
 import org.limewire.hello.base.user.Describe;
@@ -182,7 +182,7 @@ public class WebDownload {
 			close(state);
 		
 		// Any file problem closes this Download, showing "Cannot Save" to the user
-		} catch (FileException e) {
+		} catch (IOException e) {
 			close(new OldState(OldState.couldNot, "Cannot Save"));
 		}
 	}

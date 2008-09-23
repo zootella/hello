@@ -11,6 +11,8 @@ import org.limewire.hello.base.exception.CodeException;
 
 public class Data implements Comparable<Data> {
 	
+	//TODO fix the 3 todos below to improve performance and stop copying the ByteBuffer a million times
+	
 	// -------- Make a new Data object to view some data --------
 
 	/** Make a new Data object that views the single byte y. */
@@ -22,6 +24,7 @@ public class Data implements Comparable<Data> {
 	/** Make a new Data object that views the data between b's position and limit, doesn't change b. */
 	public Data(ByteBuffer b) {
 		buffer = b.asReadOnlyBuffer().slice(); // Save a copy of b so if b's position moves, buffer's position won't
+		//TODO is it necessary to read only and slice, here, this copies it twice more, that may be slow
 	}
 
 	/**
@@ -77,6 +80,7 @@ public class Data implements Comparable<Data> {
 		if (size > size()) throw new ChopException(); // Asked to remove more than we have
 		buffer.position(buffer.position() + size); // Move our ByteBuffer's position forward size bytes
 		buffer = buffer.slice(); // Make a new ByteBuffer clipped around just that part
+		//TODO stop using slice entirely
 	}
 
 	/** Remove data from the start of this Data object, keeping only the last size bytes. */

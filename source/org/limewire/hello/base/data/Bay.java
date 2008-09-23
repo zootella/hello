@@ -1,14 +1,12 @@
 package org.limewire.hello.base.data;
 
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 
-import org.limewire.hello.base.file.FileException;
+import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.internet.IpPort;
 import org.limewire.hello.base.pattern.Stripe;
 
@@ -75,6 +73,7 @@ public class Bay {
 		b.position(offset); // Clip b's position and limit around our data
 		b.limit(buffer.position());
 		return b.slice(); // Return a ByteBuffer sized around the data
+		//TODO the slice is unnecessary
 	}
 	
 	// -------- Remove some data from the start --------
@@ -197,33 +196,25 @@ public class Bay {
 	//TODO stop using all below
 	// note Bin.medium 8K is our TCP buffer size, and Bin.big 64K is our UDP buffer size
 	
-	// -------- File transfer --------
+	// In
 
-	/** Add a stripe of data from a file to this Bay object, or throw a FileException. */
-	public void read(FileChannel c, Stripe stripe) throws FileException {
+	/** Add the given stripe of data from file to this Bay, or throw an IOException. */
+	public void read(File file, Stripe stripe) throws IOException {
 		
-		// Prepare enough room in our buffer for the file data
+		// Prepare enough room
 		prepare((int)stripe.size);
-		
-		// Remember where our buffer's position is before read() moves it
-		int position = buffer.position();
-		
-		try {
-			
-			// Copy data from the file at stripe.i to our buffer
-			int read = c.read(buffer, stripe.i);
-			if (read == -1 ||                                 // Hit the end of the file
-				read != buffer.position() - position ||       // Moved buffer's position incorrectly
-				read < stripe.size)                           // Brought in less than we want
-				throw new IOException();
-			if (read > stripe.size)                           // Brought in more than we want
-				buffer.position(position + (int)stripe.size); // Move position back to have just what we want
 
-		// read() threw an exception or returned a bad size
-		} catch (IOException e) {
-			buffer.position(position); // Restore our buffer's position
-			throw new FileException();
-		}
+		// Copy our buffer to read in the stripe
+		ByteBuffer fill = buffer.duplicate(); // Copy buffer to move b's position and limit separately
+		fill.limit(fill.position() + (int)stripe.size); // Clip position and limit around stripe size of space after our data
+		
+		// Copy data from the file to this Bay
+		int did = file.file.getChannel().read(fill, stripe.i); // Read from file at stripe.i to fill between b's position and limit
+		if (did != stripe.size) throw new IOException("did " + did); // Make sure we got everything
+		if (fill.hasRemaining()) throw new IOException("remain");
+
+		// Move buffer's position past the new data we wrote
+		buffer.position(fill.position());
 	}
 
 	// -------- Internet transfer --------
@@ -236,7 +227,7 @@ public class Bay {
 	 * @param c The SocketChannel this method will upload data into
 	 * @return  The number of bytes we uploaded
 	 */
-	public int upload(SocketChannel c) throws IOException {
+	public int oldUpload(SocketChannel c) throws IOException {
 		
 		// Make sure we have data to upload
 		if (size() == 0) return 0;
@@ -279,7 +270,7 @@ public class Bay {
 	 * @param c The SocketChannel this method will download data from
 	 * @return  The number of bytes we downloaded
 	 */
-	public int download(SocketChannel c) throws IOException {
+	public int oldDownload(SocketChannel c) throws IOException {
 
 		// Make sure we're not already full
 		if (buffer == null || size() == buffer.capacity()) return 0;
@@ -305,7 +296,7 @@ public class Bay {
 	 * @return  The IP address and port number of the computer that sent us the UDP packet, in an IpPort object.
 	 *          null if there is no packet has arrived for us to download right now.
 	 */
-	public IpPort download(DatagramChannel c) throws IOException {
+	public IpPort oldReceive(DatagramChannel c) throws IOException {
 
 		// Clear this Bay so it can hold as much as possible
 		clear();

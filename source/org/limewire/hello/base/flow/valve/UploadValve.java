@@ -1,25 +1,28 @@
-package org.limewire.hello.base.valve;
+package org.limewire.hello.base.flow.valve;
 
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.later.MoveLater;
+import org.limewire.hello.base.internet.Socket;
+import org.limewire.hello.base.later.UploadLater;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 
-public class MoveValve extends Close implements Valve {
+public class UploadValve extends Close implements Valve {
 	
 	// Make
 
-	/** Make a MoveValve that will move data from our in bin to our out bin, just as an example. */
-	public MoveValve(Update update) {
+	/** Make an UploadValve that will upload data into socket. */
+	public UploadValve(Update update, Socket socket) {
+		this.socket = socket;
 		this.update = update;
 		in = Bin.medium();
-		out = Bin.medium();
 	}
 	
-	/** The Update for the Tube we're in. */
+	/** The Update for the ValveList we're in. */
 	private final Update update;
-	/** Our current MoveLater that moves data from in to out, null if we don't have one right now. */
-	private MoveLater later;
+	/** The socket we upload to. */
+	private final Socket socket;
+	/** Our current UploadLater that uploads data from in to socket, null if we don't have one right now. */
+	private UploadLater later;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
@@ -29,9 +32,9 @@ public class MoveValve extends Close implements Valve {
 			later = null; // Discard the closed later so in() and out() work
 		}
 	}
-
-	// Use
 	
+	// Use
+
 	/** Have this Valve stop if it's done, and throw the exception that stopped it. */
 	public void stop() throws Exception {
 		if (closed()) return;
@@ -44,21 +47,17 @@ public class MoveValve extends Close implements Valve {
 	/** Tell this Valve to start, if possible. */
 	public void start() {
 		if (closed()) return;
-		if (later == null && in.hasData() && out.hasSpace())
-			later = new MoveLater(update, in, out);
+		if (later == null && in.hasData())
+			later = new UploadLater(update, socket, in);
 	}
-	
+
 	/** Access this Valve's input Bin to give it data, null if started. */
 	public Bin in() {
-		if (later != null) return null; // later's worker thread is using our bins, keep them private
+		if (later != null) return null; // later's worker thread is using our bin, keep it private
 		return in;
 	}
 	private Bin in;
 	
-	/** Access this Valve's output Bin to get the data it processed, null if started. */
-	public Bin out() {
-		if (later != null) return null;
-		return out;
-	}
-	private Bin out;
+	/** An UploadValve doesn't have an output bin. */
+	public Bin out() { return null; }
 }

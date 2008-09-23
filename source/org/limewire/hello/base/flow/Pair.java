@@ -1,10 +1,7 @@
-package org.limewire.hello.base.valve;
+package org.limewire.hello.base.flow;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.limewire.hello.base.data.Bay;
-import org.limewire.hello.base.data.Bin;
 
 public class Pair {
 	

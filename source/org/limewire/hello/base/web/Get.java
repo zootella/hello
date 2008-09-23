@@ -1,5 +1,7 @@
 package org.limewire.hello.base.web;
 
+import java.io.IOException;
+
 import org.limewire.hello.all.Program;
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Number;
@@ -8,8 +10,7 @@ import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.CodeException;
 import org.limewire.hello.base.exception.MessageException;
-import org.limewire.hello.base.file.File;
-import org.limewire.hello.base.file.FileException;
+import org.limewire.hello.base.file.OldFile;
 import org.limewire.hello.base.internet.Ip;
 import org.limewire.hello.base.internet.IpPort;
 import org.limewire.hello.base.internet.old.Internet;
@@ -32,7 +33,7 @@ public class Get {
 	 * @param ip       The IP address of the Web server
 	 * @param file     The file to save the downloaded data to
 	 */
-	public Get(Internet internet, Url url, Ip ip, File file) {
+	public Get(Internet internet, Url url, Ip ip, OldFile file) {
 
 		// Save a reference to the file we'll put data in
 		this.file = file;
@@ -61,7 +62,7 @@ public class Get {
 	}
 
 	/** The file this Get object was given to save data into. */
-	private File file;
+	private OldFile file;
 	
 	/**
 	 * Our Tube that we talk to the Web server through.
@@ -161,7 +162,7 @@ public class Get {
 			// Record we saved that many more bytes to our file
 			saved += size;
 
-		} catch (FileException e) { throw new OldState(OldState.fileException); // There was a problem saving to disk
+		} catch (IOException e) { throw new OldState(OldState.fileException); // There was a problem saving to disk
 		} catch (ChopException e) { throw new CodeException(); } // There is a mistake in the code
 	}
 

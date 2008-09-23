@@ -43,4 +43,12 @@ public abstract class Close {
 		if (programOpen != 0)
 			throw new IllegalStateException("program closed with " + programOpen + " open objects");
 	}
+
+	// Help
+
+	/** Close the given object that extends Close, takes null and ignores exception. */
+	public static void close(Close c) {
+		if (c == null) return;
+		try { c.close(); } catch (Exception e) {}
+	}
 }

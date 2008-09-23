@@ -113,7 +113,7 @@ public class InternetPackets {
 		while (true) {
 			
 			// Get the data of one UDP packet that's arrived
-			IpPort from = bay.download(select.datagram);
+			IpPort from = bay.oldReceive(select.datagram);
 			if (from == null) break; // The channel is out of packets
 
 			// Make it into a new Packet object, and add it to the download list

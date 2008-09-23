@@ -12,7 +12,7 @@ import org.limewire.hello.base.time.Now;
 
 public class TubeUp extends Close {
 	
-	public TubeUp(Socket tube) {
+	public TubeUp(Tube tube) {
 		this.tube = tube;
 		update = new Update(new MyReceive());
 		bin = Bin.medium();
@@ -22,7 +22,7 @@ public class TubeUp extends Close {
 		if (later != null) later.close();
 	}
 	
-	private final Socket tube;
+	private final Tube tube;
 	
 	private UploadLater later;
 	/** only touch bin when later is null. */

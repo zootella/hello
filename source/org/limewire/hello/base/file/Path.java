@@ -1,6 +1,7 @@
 package org.limewire.hello.base.file;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.exception.MessageException;
@@ -96,9 +97,9 @@ public class Path {
 	public boolean existsFolder() { return file.isDirectory(); }
 	
 	/** Confirm this Path is to a folder on the disk, making folders as needed, throw an IOException if it's not. */
-	public void folder() throws FileException {
+	public void folder() throws IOException {
 		if (existsFolder()) return; // It's already a folder
-		if (!file.mkdirs()) throw new FileException(); // Turn returning false into an exception
+		if (!file.mkdirs()) throw new IOException(); // Turn returning false into an exception
 	}
 	
 	/**
@@ -106,16 +107,16 @@ public class Path {
 	 * move() can rename a file or a folder, even if the folder has contents.
 	 * move() can move a file into an existing folder, but can't make a folder to move the file into.
 	 */
-	public void move(Path destination) throws FileException {
-		if (!toFile().renameTo(destination.toFile())) throw new FileException(); // Move it by renaming it
+	public void move(Path destination) throws IOException {
+		if (!toFile().renameTo(destination.toFile())) throw new IOException(); // Move it by renaming it
 	}
 	
 	/**
-	 * Delete the file at the given path, or throw a FileException.
+	 * Delete the file at the given path, or throw an IOException.
 	 * delete() can delete a file or an empty folder, but not a folder with contents.
 	 */
-	public void delete() throws FileException {
+	public void delete() throws IOException {
 		if (!exists()) return; // Nothing to delete, delete() below would return false
-		if (!file.delete()) throw new FileException(); // Turn returning false into an exception
+		if (!file.delete()) throw new IOException(); // Turn returning false into an exception
 	}
 }

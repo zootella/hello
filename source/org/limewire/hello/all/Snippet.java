@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.limewire.hello.base.exception.MessageException;
+import org.limewire.hello.base.flow.HashFileDialog;
 import org.limewire.hello.base.internet.Ip;
 import org.limewire.hello.base.state.old.OldClose;
 import org.limewire.hello.base.web.Url;
@@ -28,13 +29,9 @@ public class Snippet {
 	
 	public static void snippet() {
 		
+
 		
-		
-		ByteBuffer buffer = ByteBuffer.allocate(5);
-		
-		buffer.position(2);
-		buffer.limit(2);
-		
+		new HashFileDialog();
 		
 		
 		

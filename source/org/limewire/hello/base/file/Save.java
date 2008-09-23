@@ -1,14 +1,16 @@
 package org.limewire.hello.base.file;
 
+import java.io.IOException;
+
 public class Save {
 	
 	// -------- Make a temporary file like "Hello 56nu24pz.db" to fill with data --------
 
 	/** Make a temporary file in folder you can download data into. */
-	public Save(Path folder) throws FileException {
+	public Save(Path folder) throws IOException {
 		this.folder = folder;
 		folder.folder(); // Make sure folder is a Path to a folder on the disk
-		file = new File(folder.add(Name.temporary()), "rw"); // Create and open a new file like "Hello 56nu24pz.db" in folder
+		file = new OldFile(folder.add(Name.temporary()), "rw"); // Create and open a new file like "Hello 56nu24pz.db" in folder
 	}
 	
 	/**
@@ -16,7 +18,7 @@ public class Save {
 	 * Before you call save(), file is like "Hello 56nu24pz.db" in folder.
 	 * After you call save(), file is either null or the file at the saved Path open for upload.
 	 */
-	public File file;
+	public OldFile file;
 	
 	// -------- When it's all downloaded, move it into a subfolder and give it a nice name for the user --------
 
@@ -27,7 +29,7 @@ public class Save {
 	 * @param open true to open the file for upload, false to leave it closed
 	 * @return     The absolute Path were we actually put it, like "C:\Saved\Folder Name\File-Name (2).ext"
 	 */
-	public Path save(PathName path, boolean open) throws FileException {
+	public Path save(PathName path, boolean open) throws IOException {
 		
 		// Pick the Path we'll try to save our temporary file to
 		Path p = avoid(folder, path); // Looks at the disk, but doesn't change it
@@ -39,7 +41,7 @@ public class Save {
 		file = null; // We don't have our temporary file anymore
 
 		// Open the file at its new location for upload
-		if (open) file = new File(p, "r"); // We only need read access
+		if (open) file = new OldFile(p, "r"); // We only need read access
 
 		// If all that worked with an exception, mark this Save object as saved
 		saved = p; // Record that we saved our file, and where
@@ -62,7 +64,7 @@ public class Save {
 				if (saved == null) file.delete(); // It's the fill file, close and delete it
 				else               file.close();  // It's the saved file, just close it
 			}
-		} catch (FileException e) {} // Ignore an exception because we're already closing anyway
+		} catch (IOException e) {} // Ignore an exception because we're already closing anyway
 	}
 	
 	// -------- Inside parts --------

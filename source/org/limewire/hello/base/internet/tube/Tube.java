@@ -1,29 +1,28 @@
 package org.limewire.hello.base.internet.tube;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.SocketChannel;
 
-import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.Socket;
 import org.limewire.hello.base.later.ConnectLater;
-import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Close;
+import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.time.Now;
 
 // a Tube is a TCP socket connection
-public class Socket extends Close {
+public class Tube extends Close {
 	
 	// Connect
 
 	/** Make a new Tube when a peer has connected to us. */
-	public Socket(Update above, SocketChannel socket) {
+	public Tube(Update above, Socket socket) {
 		this.above = above;
 		this.update = new Update(new MyReceive());
 
 		this.outgoing = false; // The peer connected to us
 		this.socket = socket;
-		this.ipPort = new IpPort((InetSocketAddress)socket.socket().getRemoteSocketAddress());
+		this.ipPort = new IpPort((InetSocketAddress)socket.channel.socket().getRemoteSocketAddress());
 		
 		timeAttempt = timeConnect = timeResponse = new Now();
 		
@@ -32,7 +31,7 @@ public class Socket extends Close {
 	}
 
 	/** Make a new Tube object to try to initiate a connection to a peer. */
-	public Socket(Update above, IpPort ipPort) {
+	public Tube(Update above, IpPort ipPort) {
 		this.above = above;
 		this.update = new Update(new MyReceive());
 
@@ -67,7 +66,7 @@ public class Socket extends Close {
 	
 	
 	/** The TCP socket that connects us to the peer. */
-	public SocketChannel socket;
+	public Socket socket;
 
 	/** A ConnectUpdate we can use to make a new outgoing socket connection. */
 	private ConnectLater connect;
@@ -78,7 +77,7 @@ public class Socket extends Close {
 		if (already()) return;
 
 		if (connect != null) connect.close();
-		Bin.close(socket); // This object actually owns the socket, and closes it
+		Close.close(socket); // This object actually owns the socket, and closes it
 		
 		up.close();
 		down.close();

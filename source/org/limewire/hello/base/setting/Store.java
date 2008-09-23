@@ -1,12 +1,14 @@
 package org.limewire.hello.base.setting;
 
+import java.io.IOException;
+
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Outline;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.File;
-import org.limewire.hello.base.file.FileException;
 import org.limewire.hello.base.file.Here;
+import org.limewire.hello.base.file.OldFile;
 import org.limewire.hello.base.file.Path;
 
 
@@ -36,7 +38,7 @@ public class Store {
 		// That didn't work, outline will be the blank empty Outline
 		} catch (ChopException e) {
 		} catch (MessageException e) {
-		} catch (FileException e) {}
+		} catch (IOException e) {}
 	}
 
 	/** The Path where the store file is on the disk. */
@@ -57,7 +59,7 @@ public class Store {
 			File.save(path, new Data(outline.toString()));
 			
 		// That didn't work, but we can't do anything about it
-		} catch (FileException e) {}
+		} catch (IOException e) {}
 	}
 	
 	// -------- Make different kinds of setting objects that will save themselves in this Store --------

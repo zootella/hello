@@ -1,29 +1,28 @@
-package org.limewire.hello.base.valve;
-
-import java.nio.channels.SocketChannel;
+package org.limewire.hello.base.flow.valve;
 
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.later.DownloadLater;
+import org.limewire.hello.base.encode.Hash;
+import org.limewire.hello.base.later.HashLater;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 
-public class DownloadValve extends Close implements Valve {
+public class HashValve extends Close implements Valve {
 	
 	// Make
 
-	/** Make a DownloadValve that will download data from socket. */
-	public DownloadValve(Update update, SocketChannel socket) {
+	/** Make a HashValve that will take data from in() and hash it. */
+	public HashValve(Update update, Hash hash) {
 		this.update = update;
-		this.socket = socket;
-		out = Bin.medium();
+		this.hash = hash;
+		in = Bin.medium();
 	}
 	
-	/** The Update for the Tube we're in. */
+	/** The Update for the ValveList we're in. */
 	private final Update update;
-	/** The socket we download from. */
-	private final SocketChannel socket;
-	/** Our current DownloadLater that downloads data from socket to out, null if we don't have one right now. */
-	private DownloadLater later;
+	/** The file we write to. */
+	private final Hash hash;
+	/** Our current HashLater, null if we don't have one right now. */
+	private HashLater later;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
@@ -48,17 +47,17 @@ public class DownloadValve extends Close implements Valve {
 	/** Tell this Valve to start, if possible. */
 	public void start() {
 		if (closed()) return;
-		if (later == null && out.hasSpace())
-			later = new DownloadLater(update, socket, out);
+		if (later == null && in.hasSpace())
+			later = new HashLater(update, hash, in);
 	}
 
-	/** A DownloadValve doesn't have an input bin. */
-	public Bin in() { return null; }
-	
-	/** Access this Valve's output Bin to get the data it processed, null if started. */
-	public Bin out() {
+	/** Access this Valve's input Bin to get the data it will hash, null if started. */
+	public Bin in() {
 		if (later != null) return null; // later's worker thread is using our bin, keep it private
-		return out;
+		return in;
 	}
-	private Bin out;
+	private Bin in;
+	
+	/** A WriteValve doesn't have an output bin, it discards the data it hashes. */
+	public Bin out() { return null; }
 }

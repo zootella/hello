@@ -1,17 +1,13 @@
 package org.limewire.hello.bittorrent.meta;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.limewire.hello.all.Main;
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.pattern.Stripe;
-import org.limewire.hello.bittorrent.meta.FileStripe;
-import org.limewire.hello.bittorrent.meta.Meta;
-import org.limewire.hello.bittorrent.meta.MetaFile;
-
-
-import java.util.List;
 
 public class MetaTest {
 
