@@ -7,17 +7,18 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.View;
-import org.limewire.hello.base.state.old.OldClose;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.Dialog;
 import org.limewire.hello.base.user.Panel;
+import org.limewire.hello.base.user.Refresh;
 import org.limewire.hello.base.user.SelectTextArea;
 import org.limewire.hello.download.Download;
 
 /** The Download Properties dialog box on the screen that shows the user the properties of a download. */
-public class DownloadPropertiesDialog extends OldClose {
+public class DownloadPropertiesDialog extends Close {
 	
 	// -------- Dialog --------
 
@@ -75,26 +76,24 @@ public class DownloadPropertiesDialog extends OldClose {
 	/** The text areas in the dialog that hold information that changes. */
 	private SelectTextArea status, name, size, type, address, savedTo;
 
-	// -------- View --------
+	// View
 
-	// When the Download's Model changes, it calls the methods here
-	private View view;
-	private class MyView extends View {
+	// When our Model underneath changes, it calls these methods
+	private final View view;
+	private class MyView implements View {
 
 		// The Download Model changed, we need to update our text for the user
-		public void receive() {
-			Describe.update(status,  download.model.status()); // Get text from the Download's Model
-			Describe.update(name,    download.model.name());
-			Describe.update(size,    download.model.size());
-			Describe.update(type,    download.model.type());
-			Describe.update(address, download.model.address());
-			Describe.update(savedTo, download.model.savedTo());
+		public void refresh() {
+			Refresh.text(status,  download.model.status()); // Get text from the Download's Model
+			Refresh.text(name,    download.model.name());
+			Refresh.text(size,    download.model.size());
+			Refresh.text(type,    download.model.type());
+			Refresh.text(address, download.model.address());
+			Refresh.text(savedTo, download.model.savedTo());
 		}
 
-		// The Download closed, we need to close this properties dialog
-		public void close() {
-			me().close(); // Call DownloadPropertiesDialog.close()
-		count(); }
+		// The Model beneath closed, take this View off the screen
+		public void vanish() { me().close(); }
 	}
 	
 	// -------- Buttons --------
@@ -112,10 +111,11 @@ public class DownloadPropertiesDialog extends OldClose {
 	// -------- Methods --------
 
 	/** Close this dialog box. */
-	private void close() {
+	public void close() {
+		if (already()) return;
 		download.model.remove(view); // Disconnect us from the Model below
 		dialog.dispose(); // Close the dialog box
-	count(); }
+	}
 	
 	/** Give inner classes a link to this outer DownloadPropertiesDialog object. */
 	private DownloadPropertiesDialog me() { return this; }

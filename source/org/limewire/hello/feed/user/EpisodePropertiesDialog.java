@@ -12,6 +12,7 @@ import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.Dialog;
 import org.limewire.hello.base.user.Panel;
+import org.limewire.hello.base.user.Refresh;
 import org.limewire.hello.base.user.SelectTextArea;
 import org.limewire.hello.feed.Episode;
 
@@ -84,26 +85,24 @@ public class EpisodePropertiesDialog {
 	/** The Address text area in the dialog. */
 	private SelectTextArea address;
 
-	// -------- View --------
+	// View
 
-	// When the Episode's Model changes, it calls the methods here
-	private View view;
-	private class MyView extends View {
+	// When our Model underneath changes, it calls these methods
+	private final View view;
+	private class MyView implements View {
 
 		// The Episode Model changed, we need to update our text for the user
-		public void receive() {
-			Describe.update(status,      episode.model.status()); // Get text from the Episode's Model
-			Describe.update(title,       episode.model.episode());
-			Describe.update(time,        episode.model.time());
-			Describe.update(date,        episode.model.date());
-			Describe.update(description, episode.model.description());
-			Describe.update(address,     episode.model.address());
+		public void refresh() {
+			Refresh.text(status,      episode.model.status()); // Get text from the Episode's Model
+			Refresh.text(title,       episode.model.episode());
+			Refresh.text(time,        episode.model.time());
+			Refresh.text(date,        episode.model.date());
+			Refresh.text(description, episode.model.description());
+			Refresh.text(address,     episode.model.address());
 		}
 
-		// The Episode closed, we need to close this properties dialog
-		public void close() {
-			me().close(); // Call EpisodePropertiesDialog.close()
-		}
+		// The Model beneath closed, take this View off the screen
+		public void vanish() { me().close(); }
 	}
 	
 	// -------- Buttons --------

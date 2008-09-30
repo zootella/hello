@@ -3,8 +3,8 @@ package org.limewire.hello.base.later;
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.internet.Socket;
+import org.limewire.hello.base.move.Move;
 import org.limewire.hello.base.state.Update;
-import org.limewire.hello.base.time.Move;
 
 public class DownloadLater extends Later {
 	

@@ -11,16 +11,16 @@ public class HashValve extends Close implements Valve {
 	// Make
 
 	/** Make a HashValve that will take data from in() and hash it. */
-	public HashValve(Update update, Hash hash) {
+	public HashValve(Update update) {
 		this.update = update;
-		this.hash = hash;
+		this.hash = new Hash();
 		in = Bin.medium();
 	}
 	
 	/** The Update for the ValveList we're in. */
 	private final Update update;
-	/** The file we write to. */
-	private final Hash hash;
+	/** The Hash that hashes the data. */
+	public final Hash hash;
 	/** Our current HashLater, null if we don't have one right now. */
 	private HashLater later;
 
@@ -35,29 +35,36 @@ public class HashValve extends Close implements Valve {
 	
 	// Use
 
-	/** Have this Valve stop if it's done, and throw the exception that stopped it. */
+	public boolean processing() {
+		if (closed()) return false;
+		return later != null;
+	}
+
+	public boolean canStop() {
+		if (closed()) return false;
+		return later != null && later.closed();
+	}
 	public void stop() throws Exception {
-		if (closed()) return;
-		if (later != null && later.closed()) { // Our later finished
+		if (canStop()) {    // Our later finished
 			later.result(); // If an exception closed later, throw it
-			later = null; // Discard the closed later, now in() and out() will work
+			later = null;   // Discard the closed later, now in() and out() will work
 		}
 	}
 	
-	/** Tell this Valve to start, if possible. */
+	public boolean canStart() {
+		if (closed()) return false;
+		return later == null && in.hasData();
+	}
 	public void start() {
-		if (closed()) return;
-		if (later == null && in.hasSpace())
+		if (canStart())
 			later = new HashLater(update, hash, in);
 	}
 
-	/** Access this Valve's input Bin to get the data it will hash, null if started. */
 	public Bin in() {
 		if (later != null) return null; // later's worker thread is using our bin, keep it private
 		return in;
 	}
 	private Bin in;
 	
-	/** A WriteValve doesn't have an output bin, it discards the data it hashes. */
 	public Bin out() { return null; }
 }

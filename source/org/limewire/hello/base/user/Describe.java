@@ -1,6 +1,9 @@
 package org.limewire.hello.base.user;
 
+import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JToggleButton;
 import javax.swing.text.JTextComponent;
 
 import org.limewire.hello.base.data.Number;
@@ -163,27 +166,4 @@ public class Describe {
 		// Report our prediction
 		return previous;
 	}
-	
-	
-	
-	
-
-	/** Update the text of component to s if necessary. */
-	public static void update(JTextComponent component, String s) {
-		if (!component.getText().equals(s)) component.setText(s);
-	}
-	
-	/** Update the text of component to s if necessary. */
-	public static void update(JLabel component, String s) {
-		if (!component.getText().equals(s)) component.setText(s);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

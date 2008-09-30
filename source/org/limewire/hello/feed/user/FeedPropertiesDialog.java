@@ -7,17 +7,18 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.View;
-import org.limewire.hello.base.state.old.OldClose;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.Dialog;
 import org.limewire.hello.base.user.Panel;
+import org.limewire.hello.base.user.Refresh;
 import org.limewire.hello.base.user.SelectTextArea;
 import org.limewire.hello.feed.Feed;
 
 /** The Feed Properties dialog box on the screen that shows the user the properties of a feed. */
-public class FeedPropertiesDialog extends OldClose {
+public class FeedPropertiesDialog extends Close {
 	
 	// -------- Dialog --------
 
@@ -77,25 +78,22 @@ public class FeedPropertiesDialog extends OldClose {
 	/** The Address text area in the dialog. */
 	private SelectTextArea address;
 
-	// -------- View --------
+	// View
 
-	// When the Feed's Model changes, it calls the methods here
-	private View view;
-	private class MyView extends View {
+	// When our Model underneath changes, it calls these methods
+	private final View view;
+	private class MyView implements View {
 
 		// The Feed Model changed, we need to update our text for the user
-		public void receive() {
-			Describe.update(status,      feed.model.status());
-			Describe.update(name,        feed.model.name());
-			Describe.update(description, feed.model.description());
-			Describe.update(address,     feed.model.address());
+		public void refresh() {
+			Refresh.text(status,      feed.model.status());
+			Refresh.text(name,        feed.model.name());
+			Refresh.text(description, feed.model.description());
+			Refresh.text(address,     feed.model.address());
 		}
 
-		// The Feed closed, we need to close this properties dialog
-		public void close() {
-			me().close(); // Call FeedPropertiesDialog.close()
-			count();
-		}
+		// The Model beneath closed, take this View off the screen
+		public void vanish() { me().close(); }
 	}
 	
 	// -------- Buttons --------
@@ -133,10 +131,10 @@ public class FeedPropertiesDialog extends OldClose {
 	// -------- Methods --------
 
 	/** Close this dialog box. */
-	private void close() {
+	public void close() {
+		if (already()) return;
 		feed.model.remove(view); // Disconnect us from the Model below
 		dialog.dispose(); // Close the dialog box
-		count();
 	}
 	
 	/** Give inner classes a link to this outer FeedPropertiesDialog object. */

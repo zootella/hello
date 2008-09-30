@@ -4,13 +4,12 @@ import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.later.DownloadLater;
+import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
-import org.limewire.hello.base.state.old.OldClose;
-import org.limewire.hello.base.state.old.OldUpdate;
 import org.limewire.hello.base.time.Now;
 
-public class TubeDown extends OldClose {
+public class TubeDown extends Close {
 	
 	public TubeDown(Tube tube) {
 		this.tube = tube;
@@ -19,6 +18,7 @@ public class TubeDown extends OldClose {
 	}
 	
 	public void close() {
+		if (already()) return;
 		if (later != null) later.close();
 	}
 	
@@ -31,7 +31,6 @@ public class TubeDown extends OldClose {
 	
 	private Update update;
 	
-	private boolean closed;
 
 	
 	
@@ -50,7 +49,7 @@ public class TubeDown extends OldClose {
 	// When a worker object we gave our Update has progressed or completed, it calls this receive() method
 	private class MyReceive implements Receive {
 		public void receive() {
-			if (closed) return;
+			if (closed()) return;
 			try {
 
 				// We downloaded

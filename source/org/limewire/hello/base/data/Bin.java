@@ -10,8 +10,9 @@ import org.limewire.hello.base.exception.CodeException;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.internet.IpPort;
 import org.limewire.hello.base.internet.Socket;
+import org.limewire.hello.base.move.FileMove;
+import org.limewire.hello.base.move.Move;
 import org.limewire.hello.base.pattern.Stripe;
-import org.limewire.hello.base.time.Move;
 import org.limewire.hello.base.time.Now;
 import org.limewire.hello.base.time.Size;
 
@@ -145,11 +146,9 @@ public class Bin {
 	 */
 	private ByteBuffer buffer;
 
-	/** Copy our buffer clipped around space for moving data in. */
-	private ByteBuffer in() { return in(space()); }
-	/** Copy our buffer clipped around space bytes of space for moving data in. */
-	private ByteBuffer in(int space) {
-		if (space < 1 || space > space()) throw new IndexOutOfBoundsException();
+	/** Copy our buffer clipped around space bytes of space for moving data in, make sure space is at least check. */
+	private ByteBuffer in(int check, int space) {
+		if (space < check || space > space()) throw new IndexOutOfBoundsException();
 		ByteBuffer b = buffer.duplicate();
 		b.limit(b.position() + space);
 		return b;
@@ -167,11 +166,9 @@ public class Bin {
 		buffer = space;
 	}
 
-	/** Copy our buffer clipped around data for moving data out. */
-	private ByteBuffer out() { return out(size()); }
-	/** Copy our buffer clipped around size bytes of data at the start for moving data out. */
-	private ByteBuffer out(int size) {
-		if (size < 1 || size > size()) throw new IndexOutOfBoundsException();
+	/** Copy our buffer clipped around size bytes of data at the start for moving data out, make sure size is at least check. */
+	private ByteBuffer out(int check, int size) {
+		if (size < check || size > size()) throw new IndexOutOfBoundsException();
 		ByteBuffer b = buffer.duplicate();
 		b.position(0);
 		b.limit(size);
@@ -194,37 +191,37 @@ public class Bin {
 	// File
 	
 	/** Add 1 byte or more from the start of stripe in file to this Bin, or throw an IOException. */
-	public Move read(File file, Stripe stripe) throws IOException {
+	public FileMove read(File file, Stripe stripe) throws IOException {
 		stripe = stripe.begin(space()); // Don't try to read more bytes than we have space for
-		ByteBuffer space = in((int)stripe.size);
+		ByteBuffer space = in(1, (int)stripe.size);
 		Now start = new Now();
 		int did = file.file.getChannel().read(space, stripe.i); // Read from the file at i and move space.position forward
 		inCheck(did, space);
 		inDone(space);
-		return new Move(start, stripe, did, null);
+		return new FileMove(start, stripe.i, did);
 	}
 	
 	/** Move 1 byte or more from this Bin to stripe in file, or throw an IOException. */
-	public Move write(File file, Stripe stripe) throws IOException {
+	public FileMove write(File file, Stripe stripe) throws IOException {
 		stripe = stripe.begin(size()); // Don't try to write more bytes than we have
-		ByteBuffer data = out((int)stripe.size);
+		ByteBuffer data = out(1, (int)stripe.size);
 		Now start = new Now();
 		int did = file.file.getChannel().write(data, stripe.i); // Write to the file at i and move data.position forward
 		outCheck(did, data);
 		outDone(data);
-		return new Move(start, stripe, did, null);
+		return new FileMove(start, stripe.i, did);
 	}
 
 	// Socket
 	
 	/** Download 1 or more bytes from socket, adding it to this Bin, or throw an IOException. */
 	public Move download(Socket socket) throws IOException {
-		ByteBuffer space = in(); // We must have room for at least 1 byte
+		ByteBuffer space = in(1, space()); // We must have room for at least 1 byte
 		Now start = new Now();
 		int did = socket.channel.read(space); // Download data and move position forward
 		inCheck(did, space);
 		inDone(space);
-		return new Move(start, null, did, null);
+		return new Move(start, did, null);
 	}
 
 	/**
@@ -233,58 +230,55 @@ public class Bin {
 	 * Removes what's uploaded from this Bin.
 	 */
 	public Move upload(Socket socket) throws IOException {
-		ByteBuffer data = out();
+		ByteBuffer data = out(1, size());
 		Now start = new Now();
 		int did = socket.channel.write(data); // Upload data and move position forward
 		outCheck(did, data);
 		outDone(data);
-		return new Move(start, null, did, null);
+		return new Move(start, did, null);
 	}
 
 	// Packet
 	
 	/**
-	 * Receive the data of a single UDP packet from gram, putting it in this empty Bin.
+	 * Receive the data of a single UDP packet from gram, 0 or more bytes, putting it in this empty Bin.
 	 * @return A Move with the size of the packet we got and the IP address and port number it came from.
 	 */
 	public Move receive(DatagramChannel gram) throws IOException {
-		if (hasData()) throw new IllegalStateException("not empty"); // Make sure we start out empty
-		ByteBuffer space = in();
+		ByteBuffer space = in(0, capacity()); // Make sure we start out empty
 		Now start = new Now();
 		InetSocketAddress a = (InetSocketAddress)gram.receive(space); // Receive a packet and move position forward
-		if (a == null)                      throw new IOException("returned null");
-		if (space.position() == 0)          throw new IOException("got nothing");
-		if (space.position() == capacity()) throw new IOException("may have truncated");
+		if (a == null) throw new IOException("null");
 		inDone(space);
-		return new Move(start, null, size(), new IpPort(a));
+		return new Move(start, size(), new IpPort(a));
 	}
-	
-	/** Use gram to send the data in this Bin as a UDP packet to p. */
+
+	/** Use gram to send the data in this Bin, 0 or more bytes, as a UDP packet to p. */
 	public Move send(DatagramChannel gram, IpPort p) throws IOException {
-		ByteBuffer data = out();
+		ByteBuffer data = out(0, size()); // We might send a UDP packet with no data payload
 		Now start = new Now();
 		int did = gram.send(data, p.toInetSocketAddress()); // Send a packet and move position forward
-		if (did != size())         throw new IOException("not everything");
-		if (data.remaining() != 0) throw new IOException("left remaining");
+		if (did != size())         throw new IOException("behind");
+		if (data.remaining() != 0) throw new IOException("position");
 		outDone(data);
-		return new Move(start, null, did, null);
+		return new Move(start, did, null);
 	}
 
 	// Direct
 	
 	/** Download data directly from socket to file, filling the start of stripe there, or throw an IOException. */
-	public static Move down(Socket socket, File file, Stripe stripe) throws IOException {
+	public static FileMove down(Socket socket, File file, Stripe stripe) throws IOException {
 		Now start = new Now();
 		long did = file.file.getChannel().transferFrom(socket.channel, stripe.i, stripe.size); // Download up to size bytes to the file at i
 		if (did < 1) throw new IOException("did " + did); // Wrote nothing
-		return new Move(start, stripe, did, null);
+		return new FileMove(start, stripe.i, did);
 	}
 
 	/** Upload data from the start of stripe in file directly to socket, or throw an IOException. */
-	public static Move up(Socket socket, File file, Stripe stripe) throws IOException {
+	public static FileMove up(Socket socket, File file, Stripe stripe) throws IOException {
 		Now start = new Now();
 		long did = file.file.getChannel().transferTo(stripe.i, stripe.size, socket.channel); // Upload up to size bytes from the file at i
 		if (did < 1) throw new IOException("did " + did); // Wrote nothing
-		return new Move(start, stripe, did, null);
+		return new FileMove(start, stripe.i, did);
 	}
 }

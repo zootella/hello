@@ -34,27 +34,34 @@ public class DownloadValve extends Close implements Valve {
 	}
 	
 	// Use
-
-	/** Have this Valve stop if it's done, and throw the exception that stopped it. */
+	
+	public boolean processing() {
+		if (closed()) return false;
+		return later != null;
+	}
+	
+	public boolean canStop() {
+		if (closed()) return false;
+		return later != null && later.closed();
+	}
 	public void stop() throws Exception {
-		if (closed()) return;
-		if (later != null && later.closed()) { // Our later finished
+		if (canStop()) {    // Our later finished
 			later.result(); // If an exception closed later, throw it
-			later = null; // Discard the closed later, now in() and out() will work
+			later = null;   // Discard the closed later, now in() and out() will work
 		}
 	}
 	
-	/** Tell this Valve to start, if possible. */
+	public boolean canStart() {
+		if (closed()) return false;
+		return later == null && out.hasSpace();
+	}
 	public void start() {
-		if (closed()) return;
-		if (later == null && out.hasSpace())
+		if (canStart())
 			later = new DownloadLater(update, socket, out);
 	}
 
-	/** A DownloadValve doesn't have an input bin. */
 	public Bin in() { return null; }
 	
-	/** Access this Valve's output Bin to get the data it processed, null if started. */
 	public Bin out() {
 		if (later != null) return null; // later's worker thread is using our bin, keep it private
 		return out;

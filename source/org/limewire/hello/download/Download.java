@@ -1,36 +1,24 @@
 package org.limewire.hello.download;
 
-import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.limewire.hello.base.data.Outline;
 import org.limewire.hello.base.desktop.Open;
-import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.Here;
 import org.limewire.hello.base.file.Name;
 import org.limewire.hello.base.file.Path;
+import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Model;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
-import org.limewire.hello.base.state.old.OldClose;
 import org.limewire.hello.base.state.old.OldState;
-import org.limewire.hello.base.state.old.OldUpdate;
 import org.limewire.hello.base.time.OldTime;
 import org.limewire.hello.base.user.Describe;
-import org.limewire.hello.base.user.TableRow;
+import org.limewire.hello.base.web.Url;
 import org.limewire.hello.base.web.Web;
 import org.limewire.hello.base.web.WebDownload;
-import org.limewire.hello.base.web.Url;
-import org.limewire.hello.download.user.DownloadTab;
-import org.limewire.hello.feed.Episode;
-import org.limewire.hello.feed.Feed;
-import org.limewire.hello.feed.Feed.MyModel;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-
-public class Download extends OldClose {
+public class Download extends Close {
 
 	// -------- Store to and restore from an Outline in Store.txt --------
 
@@ -152,7 +140,7 @@ public class Download extends OldClose {
 		download.get();
 		
 		// Update our row in the Table
-		model.send();
+		model.changed();
 	}
 	
 	public void pause() {
@@ -175,11 +163,15 @@ public class Download extends OldClose {
 		cannot = null;
 
 		// Update the views looking at us
-		model.send();
+		model.changed();
 	}
 
 	/** Remove this DownloadRow from the Table and from the program. */
 	public void remove() {
+		close();
+	}
+	public void close() {
+		if (already()) return;
 		reset(); // Discards our Download object, closing connections and deleting our temporary file
 		model.close(); // Close the views looking at us
 	}
@@ -258,7 +250,7 @@ public class Download extends OldClose {
 				download = null;
 				
 				// Update our row in the Table and any other views looking at our Model
-				model.send();
+				model.changed();
 				
 			// It's still downloading
 			} else {
@@ -267,7 +259,7 @@ public class Download extends OldClose {
 				if (update2 == null) update2 = new OldTime();    // Make the update Time object when this code first runs
 				if (update2.expired(Describe.delay, true)) { // We've waited long enough, or true for this is the first time
 					update2.set();                           // Record we changed what's on the screen now
-					model.send();                         // Show the user current information
+					model.changed();                         // Show the user current information
 				}
 			}
 		}
@@ -280,21 +272,6 @@ public class Download extends OldClose {
 	/** This Download object's Model gives View objects above what they need to show us to the user. */
 	public final MyModel model;
 	public class MyModel extends Model { // Remember to call model.close()
-		
-		/** The Download object that made and contains this Model. */
-		public Object out() { return me(); }
-
-		/** Compose text about the current state of this Download object to show the user. */
-		public Map<String, String> view() {
-			Map<String, String> map = new LinkedHashMap<String, String>();
-			map.put("Status",   status());
-			map.put("Name",     name());
-			map.put("Size",     size());
-			map.put("Type",     type());
-			map.put("Address",  address());
-			map.put("Saved To", savedTo());
-			return map;
-		}
 		
 		// Status
 		
@@ -436,6 +413,23 @@ public class Download extends OldClose {
 			}
 		}
 		*/
+		
+		//TODO get sorting into Model also, how are you going to do that?
+
+		/** Compose text about the current state of this Download object to show the user. */
+		public Map<String, String> view() {
+			Map<String, String> map = new LinkedHashMap<String, String>();
+			map.put("Status",   status());
+			map.put("Name",     name());
+			map.put("Size",     size());
+			map.put("Type",     type());
+			map.put("Address",  address());
+			map.put("Saved To", savedTo());
+			return map;
+		}
+		
+		/** The Download object that made and contains this Model. */
+		public Object out() { return me(); }
 	}
 	
 	/** Give inner classes a link to this outer Download object. */

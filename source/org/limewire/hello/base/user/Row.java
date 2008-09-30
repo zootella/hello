@@ -28,23 +28,25 @@ public class Row {
 	public final String[] cells;
 	
 	
-	public final MyView view;
 
 	
 	
 	
 	
 	
-	// Our Model underneath calls these methods
-	private class MyView extends View {
+	// View
+
+	// When our Model underneath changes, it calls these methods
+	public final MyView view;
+	private class MyView implements View {
 
 		// The Model has changed, we need to update what we're showing the user
-		public void receive() {
+		public void refresh() {
 			table.update(model); // Have the Table do it
 		}
 
-		// The Model has closed, we need to disappear
-		public void close() {
+		// The Model beneath closed, take this View off the screen
+		public void vanish() {
 			table.remove(model); // Have the Table do it
 		}
 	}

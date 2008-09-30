@@ -19,7 +19,7 @@ public class Hash {
 	}
 
 	/** Our MessageDigest object that hashes more data based on what has come before. */
-	private MessageDigest digest;
+	private final MessageDigest digest;
 
 	/** Hash the next block of data, how you cut it up doesn't matter, just give add() the blocks in order. */
 	public void add(Data data) {

@@ -6,8 +6,6 @@ import org.limewire.hello.base.later.UploadLater;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
-import org.limewire.hello.base.state.old.OldClose;
-import org.limewire.hello.base.state.old.OldUpdate;
 import org.limewire.hello.base.time.Now;
 
 public class TubeUp extends Close {
@@ -19,6 +17,7 @@ public class TubeUp extends Close {
 	}
 	
 	public void close() {
+		if (already()) return;
 		if (later != null) later.close();
 	}
 	

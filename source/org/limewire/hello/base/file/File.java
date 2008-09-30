@@ -63,7 +63,7 @@ public class File extends Close {
 	// Close
 
 	/** Close our open connection to this file on the disk. */
-	@Override public void close() {
+	public void close() {
 		if (already()) return;
 		try { file.close(); } catch (IOException e) {} // Also closes file's FileChannel
 	}

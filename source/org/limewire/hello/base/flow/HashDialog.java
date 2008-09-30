@@ -1,6 +1,8 @@
 package org.limewire.hello.base.flow;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -15,55 +17,52 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.limewire.hello.base.state.Close;
+import org.limewire.hello.base.state.View;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Dialog;
 import org.limewire.hello.base.user.Panel;
+import org.limewire.hello.base.user.Refresh;
 import org.limewire.hello.base.user.SelectTextArea;
 import org.limewire.hello.base.user.TextMenu;
 
-/** The Add Feed dialog box on the screen that lets the user add a new feed to the list. */
-public class HashFileDialog extends Close {
+/** The Hash dialog box on the screen that lets the user hash a file. */
+public class HashDialog extends Close {
+	
+	// Program
 
-	
-	
+	// Run just this dialog box as the program
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-            	HashFileDialog dialog = new HashFileDialog();
+            	HashDialog dialog = new HashDialog();
         		dialog.dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Make closing the window close the program
             }
         });
     }
-	
-	
-	
-	
-	
-	public HashFileDialog() {
+    
+    // Dialog
 
-		path = new JTextField();
+    /** Show the Hash dialog on the screen to let the user hash a file. */
+	public HashDialog() {
+
+		// Make dialog contents
+		path = new JTextField(); // Path box
 		new TextMenu(path);
-		
-		status = new SelectTextArea();
+		status = new SelectTextArea(); // Status text
 		value = new SelectTextArea();
-		
-		browse = new BrowseAction();
+		browse = new BrowseAction(); // Actions behind buttons
 		start = new StartAction();
-		pause = new JToggleButton("Pause");
 		reset = new ResetAction();
 		close = new CloseAction();
 
+		// Lay them out
 		Panel bar1 = Panel.row();
 		bar1.add(Cell.wrap(path).fillWide());
 		bar1.add(Cell.wrap(new JButton(browse)));
-		
 		Panel bar2 = Panel.row();
 		bar2.add(Cell.wrap(new JButton(start)));
-		bar2.add(Cell.wrap(pause));
 		bar2.add(Cell.wrap(new JButton(reset)));
 		bar2.add(Cell.wrap(new JButton(close)));
-
-		// Lay them out
 		Panel panel = new Panel();
 		panel.border();
 		panel.place(0, 0, 1, 1, 0, 0, 0, 0, Cell.wrap(new JLabel("Path")));
@@ -74,80 +73,47 @@ public class HashFileDialog extends Close {
 		panel.place(1, 2, 1, 1, 1, 1, 0, 0, Cell.wrap(value).fillWide());
 		panel.place(1, 3, 1, 1, 1, 1, 0, 0, Cell.wrap(bar2.jpanel).lowerLeft().grow());
 
+		// Make our Hash object that will do what this dialog shows
+		hash = new Hash();
+
+		// Make our inner View object and connect the Feed object's model to it
+		view = new MyView();
+		hash.model.add(view); // When the Feed Model changes, it will call our view.refresh() method
+		view.refresh();
+
 		// Make the dialog box and show it on the screen
 		dialog = Dialog.make("Hash File");
 		dialog.setContentPane(panel.jpanel); // Put everything we layed out in the dialog box
-		Dialog.show(dialog, 600, 180);
-		
-		
 		dialog.addWindowListener(new MyWindowListener());         // Have Java tell us when the user closes the window
-		
-		
-		/*
-		status.setText("hello status");
-		value.setText("hello value");
-		*/
-		
+		Dialog.show(dialog, 600, 180);
 	}
+	
+	/** The Hash object this dialog is a view of. */
+	private final Hash hash;
 
+	/** The dialog box on the screen. */
 	private final JDialog dialog;
+	/** The box the user types the path in. */
 	private final JTextField path;
+	/** The hash status text output box. */
 	private final SelectTextArea status;
+	/** The hash value text output box. */
 	private final SelectTextArea value;
+	/** The Action behind the Browse button. */
 	private final Action browse;
+	/** The Action behind the Start button. */
 	private final Action start;
-	private final JToggleButton pause;
+	/** The Action behind the Reset button. */
 	private final Action reset;
+	/** The Action behind the Close button. */
 	private final Action close;
-	
-	private HashFile hash;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	// The user clicked the Browse button
-	private class BrowseAction extends AbstractAction {
-		public BrowseAction() { super("Browse"); } // Specify the button text
-		public void actionPerformed(ActionEvent a) {
-
-		}
+	/** Make this object put away resources and not change or work again. */
+	public void close() {
+		if (already()) return;
+		dialog.dispose();
+		hash.close();
 	}
-	
-	// The user clicked the Start button
-	private class StartAction extends AbstractAction {
-		public StartAction() { super("Start"); } // Specify the button text
-		public void actionPerformed(ActionEvent a) {
-
-		}
-	}
-	
-	// The user clicked the Pause button
-	private class PauseAction extends AbstractAction {
-		public PauseAction() { super("Pause"); } // Specify the button text
-		public void actionPerformed(ActionEvent a) {
-
-		}
-	}
-	
-	// The user clicked the Reset button
-	private class ResetAction extends AbstractAction {
-		public ResetAction() { super("Reset"); } // Specify the button text
-		public void actionPerformed(ActionEvent a) {
-
-		}
-	}
-	
-	
-
-	// Close
 	
 	// When the user clicks the dialog's corner X, Java calls this windowClosing() method and then takes the dialog off the screen
 	private class MyWindowListener extends WindowAdapter {
@@ -161,13 +127,53 @@ public class HashFileDialog extends Close {
 		public CloseAction() { super("Close"); } // Specify the button text
 		public void actionPerformed(ActionEvent a) {
 			close();
-			dialog.dispose();
 		}
 	}
 
-	/** Make this object put away resources and not change or work again. */
-	@Override public void close() {
-		if (already()) return;
-		Close.close(hash); // Close our hash object, if we have one
+	// The user clicked the Browse button
+	private class BrowseAction extends AbstractAction {
+		public BrowseAction() { super("Browse..."); } // Specify the button text
+		public void actionPerformed(ActionEvent a) {
+			Dialog.chooseFile(dialog, path); // Show the choice box to the user, and set the path text
+		}
 	}
+	
+	// The user clicked the Start button
+	private class StartAction extends AbstractAction {
+		public StartAction() { super("Start"); } // Specify the button text
+		public void actionPerformed(ActionEvent a) {
+			hash.start(path.getText());
+		}
+	}
+
+	// The user clicked the Reset button
+	private class ResetAction extends AbstractAction {
+		public ResetAction() { super("Reset"); } // Specify the button text
+		public void actionPerformed(ActionEvent a) {
+			hash.reset();
+		}
+	}
+
+	// View
+
+	// When our Model underneath changes, it calls these methods
+	private final View view;
+	private class MyView implements View {
+
+		// The Model beneath changed, we need to update what we show the user
+		public void refresh() {
+			Refresh.text(status, hash.model.status());
+			Refresh.text(value,  hash.model.value());
+			
+			Refresh.edit(path,   hash.model.canStart());
+			Refresh.can(browse, hash.model.canStart());
+			Refresh.can(start,  hash.model.canStart());
+		}
+
+		// The Model beneath closed, take this View off the screen
+		public void vanish() { me().close(); }
+	}
+	
+	/** Give inner classes a link to this outer HashFileDialog object. */
+	private HashDialog me() { return this; }
 }

@@ -38,30 +38,37 @@ public class WriteValve extends Close implements Valve {
 	}
 	
 	// Use
-
-	/** Have this Valve stop if it's done, and throw the exception that stopped it. */
+	
+	public boolean processing() {
+		if (closed()) return false;
+		return later != null;
+	}
+	
+	public boolean canStop() {
+		if (closed()) return false;
+		return later != null && later.closed();
+	}
 	public void stop() throws Exception {
-		if (closed()) return;
-		if (later != null && later.closed()) { // Our later finished
+		if (canStop()) {    // Our later finished
 			later.result(); // If an exception closed later, throw it
-			later = null; // Discard the closed later, now in() and out() will work
+			later = null;   // Discard the closed later, now in() and out() will work
 		}
 	}
 	
-	/** Tell this Valve to start, if possible. */
+	public boolean canStart() {
+		if (closed()) return false;
+		return later == null && in.hasSpace();
+	}
 	public void start() {
-		if (closed()) return;
-		if (later == null && in.hasSpace())
+		if (canStart())
 			later = new WriteLater(update, file, stripe, in);
 	}
 
-	/** Access this Valve's input Bin to get the data it will write to the file, null if started. */
 	public Bin in() {
 		if (later != null) return null; // later's worker thread is using our bin, keep it private
 		return in;
 	}
 	private Bin in;
 	
-	/** A WriteValve doesn't have an output bin, the destination for its data is the file. */
 	public Bin out() { return null; }
 }

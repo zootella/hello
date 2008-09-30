@@ -3,9 +3,10 @@ package org.limewire.hello.base.later;
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.file.File;
+import org.limewire.hello.base.move.FileMove;
+import org.limewire.hello.base.move.Move;
 import org.limewire.hello.base.pattern.Stripe;
 import org.limewire.hello.base.state.Update;
-import org.limewire.hello.base.time.Move;
 
 public class ReadLater extends Later {
 	
@@ -34,15 +35,15 @@ public class ReadLater extends Later {
 	// Result
 	
 	/** How much of stripe we read and how long it took, or throws the exception that made us give up. */
-	public Move result() throws Exception { return (Move)check(move); }
-	private Move move;
+	public FileMove result() throws Exception { return (FileMove)check(move); }
+	private FileMove move;
 	
 	// Inside
 
 	/** Our SwingWorker with a worker thread that runs our code that blocks. */
 	private class MySwingWorker extends SwingWorker<Void, Void> {
 		private Exception workException; // References the worker thread can safely set
-		private Move workMove;
+		private FileMove workMove;
 
 		// A worker thread will call this method
 		public Void doInBackground() {

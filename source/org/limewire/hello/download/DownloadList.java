@@ -3,10 +3,8 @@ package org.limewire.hello.download;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.exception.MessageException;
-import org.limewire.hello.base.state.old.OldClose;
-import org.limewire.hello.base.user.Row;
+import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.web.Url;
 
 // this is not the list of all the download objects in the program
@@ -14,7 +12,7 @@ import org.limewire.hello.base.web.Url;
 // rather, this is the list behidn the table on the downloads tab
 
 /** The program's list of web downloads. */
-public class DownloadList extends OldClose {
+public class DownloadList extends Close {
 
 	/** The list of downloads. */
 	private List<Download> downloads;
@@ -37,6 +35,7 @@ public class DownloadList extends OldClose {
 	}
 	
 	public void close() {
+		if (already()) return;
 
 		/*
 		// Store the download list for the next time the program runs
@@ -47,7 +46,7 @@ public class DownloadList extends OldClose {
 		}
 		*/
 
-	count(); }
+	}
 	
 	
 	

@@ -26,26 +26,14 @@ public class StripeTest {
 		assertEquals(and, and2);
 	}
 	
-	@Test public void testMinus() throws Exception {
+	@Test public void testAfter() throws Exception {
 		
-		checkMinus(new Stripe(3, 4), new Stripe(0, 2), new Stripe(3, 4));
-		checkMinus(new Stripe(3, 4), new Stripe(1, 2), new Stripe(3, 4));
-		checkMinus(new Stripe(3, 4), new Stripe(2, 2), new Stripe(4, 3));
-		checkMinus(new Stripe(3, 4), new Stripe(3, 2), new Stripe(5, 2));
-		try {
-			checkMinus(new Stripe(3, 4), new Stripe(4, 2), null);
-			fail();
-		} catch (IndexOutOfBoundsException e) {}
-		checkMinus(new Stripe(3, 4), new Stripe(5, 2), new Stripe(3, 2));
-		checkMinus(new Stripe(3, 4), new Stripe(6, 2), new Stripe(3, 3));
-		checkMinus(new Stripe(3, 4), new Stripe(7, 2), new Stripe(3, 4));
-		checkMinus(new Stripe(3, 4), new Stripe(8, 2), new Stripe(3, 4));
-		
-		checkMinus(new Stripe(3, 4), new Stripe(3, 4), null);
+		checkAfter(new Stripe(3, 4), new Stripe(3, 1), new Stripe(4, 3));
+		checkAfter(new Stripe(3, 4), new Stripe(3, 4), null);
 	}
 	
-	public void checkMinus(Stripe s1, Stripe s2, Stripe minus) {
-		Stripe minus1 = s1.minus(s2);
-		assertEquals(minus, minus1);
+	public void checkAfter(Stripe s1, Stripe s2, Stripe after) {
+		Stripe after1 = s1.after(s2);
+		assertEquals(after, after1);
 	}
 }

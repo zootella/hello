@@ -1,25 +1,6 @@
 package org.limewire.hello.all;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.util.List;
-
-import org.limewire.hello.base.exception.MessageException;
-import org.limewire.hello.base.flow.HashFileDialog;
-import org.limewire.hello.base.internet.Ip;
-import org.limewire.hello.base.state.old.OldClose;
-import org.limewire.hello.base.web.Url;
-
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
+import org.limewire.hello.base.flow.HashDialog;
 
 public class Snippet {
 
@@ -31,7 +12,7 @@ public class Snippet {
 		
 
 		
-		new HashFileDialog();
+		new HashDialog();
 		
 		
 		

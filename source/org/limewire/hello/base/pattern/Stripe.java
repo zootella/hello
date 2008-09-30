@@ -55,16 +55,11 @@ public class Stripe {
 		return list.get(0);                            // There was an overlap, return the Stripe that is it
 	}
 
-	/**
-	 * Make the Stripe that is this one minus the given one.
-	 * @return null if nothing left
-	 * @throw IndexOutOfBoundsException if removing the given stripe splits this one in two
-	 */
-	public Stripe minus(Stripe stripe) {
-		List<Stripe> list = stripe.pattern().not().stripes(this);   // Reverse the given stripe, and "and" it with this one
-		if (list.isEmpty()) return null;                            // Nothing left, return null
-		if (list.size() > 1) throw new IndexOutOfBoundsException(); // Two stripes left, throw exception
-		return list.get(0);                                         // Return the single stripe that remains
+	/** Make the Stripe that is this one after the given one, null if nothing left. */
+	public Stripe after(Stripe stripe) {
+		if (stripe.i != i || stripe.size > size) throw new IndexOutOfBoundsException(); // Indices same and size same or smaller
+		if (size == stripe.size) return null; // Nothing after
+		return new Stripe(stripe.i + stripe.size, size - stripe.size);
 	}
 	
 	/**

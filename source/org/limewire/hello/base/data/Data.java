@@ -102,6 +102,7 @@ public class Data implements Comparable<Data> {
 	 * The data is between buffer's position and limit.
 	 */
 	private ByteBuffer buffer;
+	//TODO can you make this final?
 
 	// -------- Return new Data objects that clip out parts of this Data --------
 

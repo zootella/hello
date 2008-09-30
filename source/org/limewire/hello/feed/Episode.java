@@ -58,21 +58,6 @@ public class Episode {
 	public final MyModel model;
 	public class MyModel extends Model { // Remember to call model.close()
 		
-		/** The Episode object that made and contains this Model. */
-		public Object out() { return me(); }
-
-		/** Compose text about the current state of this Episode object to show the user. */
-		public Map<String, String> view() {
-			Map<String, String> map = new LinkedHashMap<String, String>();
-			map.put("Status",      status());
-			map.put("Episode",     episode());
-			map.put("Time",        time());
-			map.put("Date",        date());
-			map.put("Description", description());
-			map.put("Address",     address());
-			return map;
-		}
-		
 		/** The download status of this Episode. */
 		public String status() {
 			return "(status)";
@@ -117,6 +102,21 @@ public class Episode {
 			else
 				return "";
 		}
+
+		/** Compose text about the current state of this Episode object to show the user. */
+		public Map<String, String> view() {
+			Map<String, String> map = new LinkedHashMap<String, String>();
+			map.put("Status",      status());
+			map.put("Episode",     episode());
+			map.put("Time",        time());
+			map.put("Date",        date());
+			map.put("Description", description());
+			map.put("Address",     address());
+			return map;
+		}
+		
+		/** The Episode object that made and contains this Model. */
+		public Object out() { return me(); }
 	}
 	
 	/** Give inner classes a link to this outer Episode object. */

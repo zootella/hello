@@ -25,13 +25,13 @@
 
 		debug = yes        Include debug information in the .class files
 		destdir            Where to put the .class files
-		source and target  Use Java version 1.5
+		source and target  Use Java version 1.6
 		-->
 		<javac
 			debug="yes"
 			destdir="ant"
-			source="1.5"
-			target="1.5">
+			source="1.6"
+			target="1.6">
 
 			<!-- Compile the code in these folders, each has a tree of .java files in it -->
 			<src path="source"/>

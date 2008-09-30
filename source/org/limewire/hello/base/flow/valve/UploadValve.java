@@ -34,30 +34,37 @@ public class UploadValve extends Close implements Valve {
 	}
 	
 	// Use
-
-	/** Have this Valve stop if it's done, and throw the exception that stopped it. */
-	public void stop() throws Exception {
-		if (closed()) return;
-		if (later != null && later.closed()) { // Our later finished
-			later.result(); // If an exception closed later, throw it
-			later = null; // Discard the closed later, now in() and out() will work
-		}
+	
+	public boolean processing() {
+		if (closed()) return false;
+		return later != null;
 	}
 	
-	/** Tell this Valve to start, if possible. */
+	public boolean canStop() {
+		if (closed()) return false;
+		return later != null && later.closed();
+	}
+	public void stop() throws Exception {
+		if (canStop()) {    // Our later finished
+			later.result(); // If an exception closed later, throw it
+			later = null;   // Discard the closed later, now in() and out() will work
+		}
+	}
+
+	public boolean canStart() {
+		if (closed()) return false;
+		return later == null && in.hasData();
+	}
 	public void start() {
-		if (closed()) return;
-		if (later == null && in.hasData())
+		if (canStart())
 			later = new UploadLater(update, socket, in);
 	}
 
-	/** Access this Valve's input Bin to give it data, null if started. */
 	public Bin in() {
 		if (later != null) return null; // later's worker thread is using our bin, keep it private
 		return in;
 	}
 	private Bin in;
 	
-	/** An UploadValve doesn't have an output bin. */
 	public Bin out() { return null; }
 }

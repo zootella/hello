@@ -10,8 +10,6 @@ import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Model;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
-import org.limewire.hello.base.state.old.OldUpdate;
-import org.limewire.hello.base.time.Once;
 import org.limewire.hello.base.web.Url;
 
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -109,7 +107,7 @@ public class Feed extends Close {
 						episodes.add(new Episode(me(), entry));
 					
 					// Tell our Model we've changed
-					model.send();
+					model.changed();
 				}
 
 			} catch (Exception e) { exception = e; close(); }
@@ -121,19 +119,6 @@ public class Feed extends Close {
 	/** This Feed object's Model gives View objects above what they need to show us to the user. */
 	public final MyModel model;
 	public class MyModel extends Model { // Remember to call model.close()
-		
-		/** The Feed object that made and contains this Model. */
-		public Object out() { return me(); }
-
-		/** Compose text about the current state of this Feed object to show the user. */
-		public Map<String, String> view() {
-			Map<String, String> map = new LinkedHashMap<String, String>();
-			map.put("Status",      status());
-			map.put("Name",        name());
-			map.put("Description", description());
-			map.put("Address",     address());
-			return map;
-		}
 		
 		/** Status text. */
 		public String status() {
@@ -158,6 +143,19 @@ public class Feed extends Close {
 		public String address() {
 			return url.toString();
 		}
+
+		/** Compose text about the current state of this Feed object to show the user. */
+		public Map<String, String> view() {
+			Map<String, String> map = new LinkedHashMap<String, String>();
+			map.put("Status",      status());
+			map.put("Name",        name());
+			map.put("Description", description());
+			map.put("Address",     address());
+			return map;
+		}
+		
+		/** The Feed object that made and contains this Model. */
+		public Object out() { return me(); }
 	}
 	
 	/** Give inner classes a link to this outer Feed object. */

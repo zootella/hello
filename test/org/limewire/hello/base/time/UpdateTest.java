@@ -1,13 +1,10 @@
 package org.limewire.hello.base.time;
 
-
-import java.awt.Frame;
-
 import javax.swing.JDialog;
 
 import org.junit.Test;
 import org.limewire.hello.base.state.Receive;
-import org.limewire.hello.base.state.old.OldUpdate;
+import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.user.Dialog;
 
 public class UpdateTest {
@@ -41,11 +38,11 @@ public class UpdateTest {
 		
 		public Parent() {
 			
-			update = new OldUpdate(new MyReceive());
+			update = new Update(new MyReceive());
 			child = new Child(update);
 		}
 		
-		public OldUpdate update;
+		public Update update;
 		public Child child;
 		
 		private class MyReceive implements Receive {
@@ -54,19 +51,15 @@ public class UpdateTest {
 				child.finished();
 			}
 		}
-		
-		public void close() {
-			update.close();
-		}
 	}
 	
 	private class Child {
 		
-		public Child(OldUpdate update) {
+		public Child(Update update) {
 			this.update = update;
 		}
 		
-		private OldUpdate update;
+		private Update update;
 		
 		public void finished() {
 			

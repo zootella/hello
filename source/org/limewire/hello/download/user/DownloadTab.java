@@ -25,11 +25,11 @@ import javax.swing.event.ListSelectionListener;
 import org.limewire.hello.all.user.Window;
 import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.desktop.Clipboard;
-import org.limewire.hello.base.state.View;
-import org.limewire.hello.base.state.old.OldClose;
+import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.user.Cell;
 import org.limewire.hello.base.user.Describe;
 import org.limewire.hello.base.user.Panel;
+import org.limewire.hello.base.user.Refresh;
 import org.limewire.hello.base.user.Row;
 import org.limewire.hello.base.user.Table;
 import org.limewire.hello.base.user.TextMenu;
@@ -37,7 +37,7 @@ import org.limewire.hello.base.web.Web;
 import org.limewire.hello.download.Download;
 import org.limewire.hello.download.DownloadList;
 
-public class DownloadTab extends OldClose {
+public class DownloadTab extends Close {
 
 	// -------- Settings --------
 
@@ -151,6 +151,7 @@ public class DownloadTab extends OldClose {
 
 	/** Store the download list and delete temporary files. */
 	public void close() {
+		if (already()) return;
 
 		// Remove all our downloads so they close their connetions and delete their temporary files
 		for (Row row : new ArrayList<Row>(table.rows)) // Loop through a copy of the list to change the original
@@ -439,7 +440,7 @@ public class DownloadTab extends OldClose {
 		String s = Describe.number(files, "file");
 		if (get      != 0) s += "  " + Describe.commas(get)      + " to get";
 		if (selected != 0) s += "  " + Describe.commas(selected) + " selected";
-		Describe.update(status, s); // Have the JLabel which is our status bar say it
+		Refresh.text(status, s); // Have the JLabel which is our status bar say it
 	}
 	
 	
