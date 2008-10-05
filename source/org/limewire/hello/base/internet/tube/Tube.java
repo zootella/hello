@@ -2,9 +2,9 @@ package org.limewire.hello.base.internet.tube;
 
 import java.net.InetSocketAddress;
 
-import org.limewire.hello.base.internet.IpPort;
-import org.limewire.hello.base.internet.Socket;
-import org.limewire.hello.base.later.ConnectLater;
+import org.limewire.hello.base.internet.name.IpPort;
+import org.limewire.hello.base.internet.socket.ConnectLater;
+import org.limewire.hello.base.internet.socket.Socket;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;

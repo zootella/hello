@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.View;
 import org.limewire.hello.base.user.Cell;
-import org.limewire.hello.base.user.Describe;
+import org.limewire.hello.base.user.OldDescribe;
 import org.limewire.hello.base.user.Dialog;
 import org.limewire.hello.base.user.Panel;
 import org.limewire.hello.base.user.Refresh;

@@ -4,13 +4,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.limewire.hello.base.data.Data;
+import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Model;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
-import org.limewire.hello.base.user.Refresh;
 
 public class Hash extends Close {
 	
@@ -27,11 +27,19 @@ public class Hash extends Close {
 		reset();
 		model.close();
 	}
+	
+	private Path path;
+	private HashFile hash;
+	private String status;
+	private String value;
+	
 
 	
 	// Command
 	
 	public void start(String user) {
+		if (!model.canStart()) return;
+		
 		reset();
 		path = null;
 		try {
@@ -48,7 +56,12 @@ public class Hash extends Close {
 		model.changed();
 	}
 	
+	public void stop() {
+		if (!model.canStop()) return;
+	}
+	
 	public void reset() {
+		if (!model.canReset()) return;
 
 		path = null;
 		
@@ -61,10 +74,6 @@ public class Hash extends Close {
 		model.changed();
 	}
 	
-	private Path path;
-	private HashFile hash;
-	private String status;
-	private String value;
 	
 	
 	// Update
@@ -74,6 +83,10 @@ public class Hash extends Close {
 	private class MyReceive implements Receive {
 		public void receive() {
 			if (closed()) return;
+			
+			if (hash != null) {
+				model.changed();
+			}
 				
 			if (hash != null && hash.closed()) {
 				Data d = hash.value;
@@ -98,9 +111,25 @@ public class Hash extends Close {
 			return hash == null;
 		}
 		
+		public boolean canStop() {
+			return hash != null;
+		}
+		
+		public boolean canReset() {
+			return true;
+		}
+		
 		/** Status text. */
 		public String status() {
-			return Model.toString(status);
+			if (Text.hasText(status)) return status;
+			if (hash == null) return "no hash";
+			return hash.progress.describeStatus();
+		}
+
+		/** Size text. */
+		public String size() {
+			if (hash == null) return "";
+			return hash.progress.describeSize();
 		}
 
 		/** Hash value. */

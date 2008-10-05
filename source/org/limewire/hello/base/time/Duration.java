@@ -1,6 +1,8 @@
 package org.limewire.hello.base.time;
 
 public class Duration {
+	
+	//TODO rename Life, with birth and death
 
 	/** Make a new Duration that will record the given start time to right now. */
 	public Duration(Now start) {

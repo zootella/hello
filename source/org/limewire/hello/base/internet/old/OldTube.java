@@ -6,7 +6,7 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
-import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.name.IpPort;
 import org.limewire.hello.base.state.old.OldState;
 import org.limewire.hello.base.time.OldTime;
 
@@ -21,7 +21,7 @@ public class OldTube {
 	 * @param select  A link back up to the program's InternetSelect object that has the Selector
 	 * @param channel The SocketChannel that connects us to them
 	 */
-	public OldTube(InternetSelect select, SocketChannel channel) {
+	public OldTube(OldInternetSelect select, SocketChannel channel) {
 
 		// Link this new Tube object into the program
 		this.select = select;            // Save the given link back up to the program's InternetSelect object
@@ -57,7 +57,7 @@ public class OldTube {
 	 * @param select  A link back up to the program's InternetSelect object that has the Selector
 	 * @param address The IP address and port number to try to connect to
 	 */
-	public OldTube(InternetSelect select, IpPort address) {
+	public OldTube(OldInternetSelect select, IpPort address) {
 
 		// Link this new Tube object into the program
 		this.select = select;            // Save the given link back up to the program's InternetSelect object
@@ -206,7 +206,7 @@ public class OldTube {
 	// -------- Internal parts --------
 
 	/** A link back up to the program's InternetSelect object that has the Selector. */
-	public InternetSelect select;
+	public OldInternetSelect select;
 
 	/** The Java SocketChannel object that holds our TCP socket connection to the peer. */
 	public SocketChannel channel;

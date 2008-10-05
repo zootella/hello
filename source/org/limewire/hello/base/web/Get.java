@@ -11,9 +11,9 @@ import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.CodeException;
 import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.OldFile;
-import org.limewire.hello.base.internet.Ip;
-import org.limewire.hello.base.internet.IpPort;
-import org.limewire.hello.base.internet.old.Internet;
+import org.limewire.hello.base.internet.name.Ip;
+import org.limewire.hello.base.internet.name.IpPort;
+import org.limewire.hello.base.internet.old.OldInternet;
 import org.limewire.hello.base.internet.old.OldTube;
 import org.limewire.hello.base.state.old.OldState;
 import org.limewire.hello.base.time.OldTime;
@@ -33,7 +33,7 @@ public class Get {
 	 * @param ip       The IP address of the Web server
 	 * @param file     The file to save the downloaded data to
 	 */
-	public Get(Internet internet, Url url, Ip ip, OldFile file) {
+	public Get(OldInternet internet, Url url, Ip ip, OldFile file) {
 
 		// Save a reference to the file we'll put data in
 		this.file = file;

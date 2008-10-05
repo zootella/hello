@@ -7,14 +7,14 @@ import org.limewire.hello.base.file.Name;
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.file.PathName;
 import org.limewire.hello.base.file.Save;
-import org.limewire.hello.base.internet.Ip;
-import org.limewire.hello.base.later.DomainLater;
+import org.limewire.hello.base.internet.name.Ip;
+import org.limewire.hello.base.internet.web.DomainLater;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.state.old.OldState;
 import org.limewire.hello.base.time.OldTime;
 import org.limewire.hello.base.time.Time;
-import org.limewire.hello.base.user.Describe;
+import org.limewire.hello.base.user.OldDescribe;
 
 
 // a relentless web download
@@ -320,7 +320,7 @@ public class WebDownload {
 	 *              -1 if we can't predict.
 	 */
 	private int arrival(int speed) {
-		arrival = Describe.arrival(sizeSaved(), size(), speed, arrival); // Give and save our previous prediction
+		arrival = OldDescribe.arrival(sizeSaved(), size(), speed, arrival); // Give and save our previous prediction
 		return arrival;
 	}
 	/** The arrival time, in seconds, that we most recently predicted. */
@@ -343,16 +343,16 @@ public class WebDownload {
 		if (state.state == OldState.doing) {
 
 			// We're stuck waiting for a Web server that won't respond, say "No response for 5 sec"
-			if (responseTime().expired(Describe.wait * Time.second, false)) { // If responseTime() was never set, return false
-				s = "No response for " + Describe.timeMillisecondsCoarse(responseTime().expired());
+			if (responseTime().expired(OldDescribe.wait * Time.second, false)) { // If responseTime() was never set, return false
+				s = "No response for " + OldDescribe.timeMillisecondsCoarse(responseTime().expired());
 				
 			// We know our speed and can predict our arrival time, say "12 sec at 2.34 KB/s to get"
 			} else if (speed != 0 && arrival != -1) {
-				s = Describe.timeSeconds(arrival) + " at " + Describe.speed(speed) + " to get";
+				s = OldDescribe.timeSeconds(arrival) + " at " + OldDescribe.speed(speed) + " to get";
 
 			// We know our speed, but can't predict our arrival time, say "Getting 2.34 KB/s"
 			} else if (speed != 0) {
-				s = "Getting " + Describe.speed(speed);
+				s = "Getting " + OldDescribe.speed(speed);
 
 			// We don't know our speed, but we're not stuck yet, just say "Getting"
 			} else {
@@ -377,6 +377,6 @@ public class WebDownload {
 
 	/** Compose text for the user that describes the size and progress of this Download, like "12% 145 KB/1,154 KB". */
 	public String describeSize() {
-		return Describe.sizePercent(sizeSaved(), size());
+		return OldDescribe.sizePercent(sizeSaved(), size());
 	}
 }

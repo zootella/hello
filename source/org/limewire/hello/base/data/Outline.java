@@ -8,7 +8,7 @@ import org.limewire.hello.base.encode.Encode;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.CodeException;
 import org.limewire.hello.base.exception.MessageException;
-import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.name.IpPort;
 
 // rules for designing your outline
 // tag names can only be numbers and lowercase letters, as short as possible

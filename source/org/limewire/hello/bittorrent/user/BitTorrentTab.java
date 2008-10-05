@@ -19,7 +19,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.limewire.hello.all.user.Window;
 import org.limewire.hello.base.user.Cell;
-import org.limewire.hello.base.user.Describe;
+import org.limewire.hello.base.user.OldDescribe;
 import org.limewire.hello.base.user.OldTable;
 import org.limewire.hello.base.user.Panel;
 import org.limewire.hello.base.user.TableRow;
@@ -215,6 +215,6 @@ public class BitTorrentTab {
 
 	/** Update the text in the status bar, like "3 torrents". */
 	public void update() {
-		status.setText(Describe.number(table.rows.size(), "torrent"));
+		status.setText(OldDescribe.number(table.rows.size(), "torrent"));
 	}
 }

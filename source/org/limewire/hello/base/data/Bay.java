@@ -7,7 +7,7 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SocketChannel;
 
 import org.limewire.hello.base.file.File;
-import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.name.IpPort;
 import org.limewire.hello.base.pattern.Stripe;
 
 // A Bay object holds data, growing to hold more you add to it.

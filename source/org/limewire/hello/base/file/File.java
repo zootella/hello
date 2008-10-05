@@ -83,6 +83,12 @@ public class File extends Close {
 	/** True if this File has 1 or more bytes of data inside. */
 	public boolean hasData() { return size() > 0; }
 
+	/** The size of this file as a Stripe 0 through size(), as though any gaps in it are full, null if empty file. */
+	public Stripe stripe() {
+		if (size() == 0) return null;
+		return new Stripe(0, size());
+	}
+
 	// Transfer
 
 	/** Read the contents of this File into memory. */

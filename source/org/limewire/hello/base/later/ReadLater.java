@@ -6,6 +6,7 @@ import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.move.FileMove;
 import org.limewire.hello.base.move.Move;
 import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 
 public class ReadLater extends Later {

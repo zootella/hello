@@ -1,9 +1,9 @@
-package org.limewire.hello.base.later;
+package org.limewire.hello.base.internet.socket;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.internet.Socket;
 import org.limewire.hello.base.move.Move;
+import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 
 public class DownloadLater extends Later {

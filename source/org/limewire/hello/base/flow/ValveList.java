@@ -44,9 +44,6 @@ public class ValveList extends Close {
 		update.send();
 	}
 	
-	/** The exception that closed us, if any. */
-	public Exception exception;
-	
 	// Go
 
 	/** Move data down this list. */
@@ -59,7 +56,7 @@ public class ValveList extends Close {
 		
 		// Move data down the list, end to start
 		Bin.move(last().out(), out);       // Take from the last in the list
-		for (Pair pair : Pair.pairs(list)) // Move data down the list
+		for (Pair pair : Pair.pairs(list)) // Move data down the list, bottom to top
 			Bin.move(((Valve)pair.a).out(), ((Valve)pair.b).in());
 		Bin.move(in, first().in());        // Give to the first in the list
 		
@@ -70,26 +67,10 @@ public class ValveList extends Close {
 
 	/** true if this ValveList is empty of data. */
 	public boolean isEmpty() throws Exception {
-
-		// There was an exception
-		if (exception != null) throw exception;
-
-		// We've got some data in our in or out bins
-		if (in != null && in.hasData()) return false; // Not empty
+		if (in != null && in.hasData())   return false; // Not empty
+		for (Valve valve: list)
+			if (!valve.isEmpty())         return false;
 		if (out != null && out.hasData()) return false;
-
-		// A Valve has a Later or what it needs to make one
-		for (Valve valve : list)
-			if (valve.processing() || valve.canStart())
-				return false;
-
-		// A valve has a bin with some data
-		for (Valve valve : list) {
-			if (valve.in() != null && valve.in().hasData()) return false;
-			if (valve.out() != null && valve.out().hasData()) return false;
-		}
-		
-		// If not any of that, we're empty
 		return true;
 	}
 }

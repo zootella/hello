@@ -3,7 +3,7 @@ package org.limewire.hello.bittorrent;
 import java.util.List;
 
 import org.limewire.hello.base.file.Here;
-import org.limewire.hello.base.internet.old.Internet;
+import org.limewire.hello.base.internet.old.OldInternet;
 import org.limewire.hello.base.setting.BooleanSetting;
 import org.limewire.hello.base.setting.PathSetting;
 import org.limewire.hello.base.setting.Store;
@@ -23,7 +23,7 @@ public class BitTorrent {
 	
 	public List<Torrent> list;
 	
-	public BitTorrent(Internet internet, Web web, Store store) {
+	public BitTorrent(OldInternet internet, Web web, Store store) {
 		
 
 		// Make the BitTorrent settings, specifying default values

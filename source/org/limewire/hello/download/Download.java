@@ -13,7 +13,7 @@ import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.state.old.OldState;
 import org.limewire.hello.base.time.OldTime;
-import org.limewire.hello.base.user.Describe;
+import org.limewire.hello.base.user.OldDescribe;
 import org.limewire.hello.base.web.Url;
 import org.limewire.hello.base.web.Web;
 import org.limewire.hello.base.web.WebDownload;
@@ -257,7 +257,7 @@ public class Download extends Close {
 				
 				// Update our row in the Table, careful to not flicker the text too quickly
 				if (update2 == null) update2 = new OldTime();    // Make the update Time object when this code first runs
-				if (update2.expired(Describe.delay, true)) { // We've waited long enough, or true for this is the first time
+				if (update2.expired(OldDescribe.delay, true)) { // We've waited long enough, or true for this is the first time
 					update2.set();                           // Record we changed what's on the screen now
 					model.changed();                         // Show the user current information
 				}
@@ -330,7 +330,7 @@ public class Download extends Close {
 		/** Compose text for the Size column in our row in the Table. */
 		public String size() {
 			if (download != null) return download.describeSize();
-			else if (saved != null) return Describe.size(size);
+			else if (saved != null) return OldDescribe.size(size);
 			else return "";
 		}
 

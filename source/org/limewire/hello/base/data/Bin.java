@@ -5,11 +5,13 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
+import org.limewire.hello.base.encode.Hash;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.CodeException;
 import org.limewire.hello.base.file.File;
-import org.limewire.hello.base.internet.IpPort;
-import org.limewire.hello.base.internet.Socket;
+import org.limewire.hello.base.internet.name.IpPort;
+import org.limewire.hello.base.internet.packet.ListenPacket;
+import org.limewire.hello.base.internet.socket.Socket;
 import org.limewire.hello.base.move.FileMove;
 import org.limewire.hello.base.move.Move;
 import org.limewire.hello.base.pattern.Stripe;
@@ -241,23 +243,23 @@ public class Bin {
 	// Packet
 	
 	/**
-	 * Receive the data of a single UDP packet from gram, 0 or more bytes, putting it in this empty Bin.
+	 * Receive the data of a single UDP packet from listen, 0 or more bytes, putting it in this empty Bin.
 	 * @return A Move with the size of the packet we got and the IP address and port number it came from.
 	 */
-	public Move receive(DatagramChannel gram) throws IOException {
+	public Move receive(ListenPacket listen) throws IOException {
 		ByteBuffer space = in(0, capacity()); // Make sure we start out empty
 		Now start = new Now();
-		InetSocketAddress a = (InetSocketAddress)gram.receive(space); // Receive a packet and move position forward
+		InetSocketAddress a = (InetSocketAddress)listen.channel.receive(space); // Receive a packet and move position forward
 		if (a == null) throw new IOException("null");
 		inDone(space);
 		return new Move(start, size(), new IpPort(a));
 	}
 
-	/** Use gram to send the data in this Bin, 0 or more bytes, as a UDP packet to p. */
-	public Move send(DatagramChannel gram, IpPort p) throws IOException {
+	/** Use listen to send the data in this Bin, 0 or more bytes, as a UDP packet to p. */
+	public Move send(ListenPacket listen, IpPort p) throws IOException {
 		ByteBuffer data = out(0, size()); // We might send a UDP packet with no data payload
 		Now start = new Now();
-		int did = gram.send(data, p.toInetSocketAddress()); // Send a packet and move position forward
+		int did = listen.channel.send(data, p.toInetSocketAddress()); // Send a packet and move position forward
 		if (did != size())         throw new IOException("behind");
 		if (data.remaining() != 0) throw new IOException("position");
 		outDone(data);

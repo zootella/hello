@@ -2,10 +2,10 @@ package org.limewire.hello.base.internet.old;
 
 import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.name.IpPort;
 
 // a Packet is a UDP packet
-public class Packet {
+public class OldPacket {
 
 	// -------- A Packet object, and its parts --------
 	
@@ -23,7 +23,7 @@ public class Packet {
 	 *                If we received this packet, the source address.
 	 * @param data    The data of the payload of the UDP packet.
 	 */
-	public Packet(IpPort address, Data d) {
+	public OldPacket(IpPort address, Data d) {
 		
 		// Make sure we were given data
 		if (d.isEmpty()) throw new IllegalArgumentException();

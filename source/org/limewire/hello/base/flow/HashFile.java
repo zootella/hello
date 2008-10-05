@@ -1,7 +1,6 @@
 package org.limewire.hello.base.flow;
 
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.encode.Hash;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.flow.valve.HashValve;
@@ -17,6 +16,7 @@ public class HashFile extends Close {
 		this.up = up;
 		update = new Update(new MyReceive());
 		open = new OpenLater(update, path, false);
+		progress = new Progress("hash", "Hashing", "Hashed");
 	}
 
 	
@@ -31,6 +31,17 @@ public class HashFile extends Close {
 	private Exception exception;
 	
 	public Data value;
+	
+	public final Progress progress;
+	
+	public long done() {
+		if (hashValve == null) return 0;
+		return hashValve.distance;
+	}
+	public long size() {
+		if (file == null) return -1;
+		return file.size();
+	}
 
 	
 
@@ -53,6 +64,7 @@ public class HashFile extends Close {
 				// Get the open file
 				if (open != null && open.closed()) {
 					file = open.result();
+					progress.size(file.size()); // Tell progress how big the file is
 					open = null;
 					up.send();
 				}
@@ -67,16 +79,17 @@ public class HashFile extends Close {
 					up.send();
 				}
 				
-				// Move data down the list
+				// Move data down the list and get progress
 				if (list != null) {
 					list.move();
+					progress.done(hashValve.distance); // Tell progress hashValve's distance
 					up.send();
 				}
 
 				// The list is done
-				if (list != null && readValve.remain() == null && list.isEmpty()) {
+				if (list != null && list.isEmpty()) {
 					list.close();
-					value = ((HashValve)list.last()).hash.done();
+					value = hashValve.hash.done();
 					list = null;
 					close();
 					up.send();
@@ -89,8 +102,6 @@ public class HashFile extends Close {
 
 	
 	
-	/** Give inner classes a link to this outer object. */
-	private HashFile me() { return this; }
 	
 	
 

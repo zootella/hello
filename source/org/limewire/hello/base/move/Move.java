@@ -1,6 +1,6 @@
 package org.limewire.hello.base.move;
 
-import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.name.IpPort;
 import org.limewire.hello.base.time.Duration;
 import org.limewire.hello.base.time.Now;
 

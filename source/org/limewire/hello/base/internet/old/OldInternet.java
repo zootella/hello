@@ -6,24 +6,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.name.IpPort;
 
-public class Internet {
+public class OldInternet {
 
 	// -------- Make and pulse the Internet object --------
 	
 	/** Make the program's Internet object to transfer data with remote peers. */
-	public Internet() {
-		select  = new InternetSelect(this);    // Make the InternetSelect object that has the Selector
-		packets = new InternetPackets(select); // Make the InternetPackets object to send and receive UDP packets
+	public OldInternet() {
+		select  = new OldInternetSelect(this);    // Make the InternetSelect object that has the Selector
+		packets = new OldInternetPackets(select); // Make the InternetPackets object to send and receive UDP packets
 		tubes   = new LinkedList<OldTube>();      // Make a list for the Tube objects that hold TCP socket connections
 	}
 	
 	/** The InternetSelect object has the Selector. */
-	public InternetSelect select;
+	public OldInternetSelect select;
 
 	/** The InternetPackets object sends and receives UDP packets. */
-	public InternetPackets packets;
+	public OldInternetPackets packets;
 
 	/** Close threads so the program can close. */
 	public void close() {
@@ -88,7 +88,7 @@ public class Internet {
 	 * 
 	 * @return A list of Packet objects.
 	 */
-	public List<Packet> packetsDownloaded() {
+	public List<OldPacket> packetsDownloaded() {
 
 		// Get the list from our InternetPackets object
 		return packets.download;

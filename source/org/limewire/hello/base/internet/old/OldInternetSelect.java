@@ -17,7 +17,7 @@ import org.limewire.hello.base.exception.PlatformException;
 import org.limewire.hello.base.exception.ProgramException;
 import org.limewire.hello.base.state.old.OldState;
 
-public class InternetSelect {
+public class OldInternetSelect {
 
 	// -------- The program's InterentSelect object and its contents --------
 	
@@ -26,7 +26,7 @@ public class InternetSelect {
 	 * 
 	 * @param internet A link back up to the program's Internet object
 	 */
-	public InternetSelect(Internet internet) {
+	public OldInternetSelect(OldInternet internet) {
 		try {
 			this.internet = internet;   // Save the link to the Internet object we're a part of
 			selector = Selector.open(); // Make the Java Selector object
@@ -35,7 +35,7 @@ public class InternetSelect {
 	}
 
 	/** A link back up to the program's Internet object. */
-	public Internet internet;
+	public OldInternet internet;
 	
 	/** The Java Selector object that will tell us which channels are ready for which operations. */
 	private Selector selector;
@@ -53,8 +53,8 @@ public class InternetSelect {
 		// Make both new channels
 		server = ServerSocketChannel.open();
 		datagram = DatagramChannel.open();
-		datagram.socket().setSendBufferSize(InternetPackets.size);    // Be able to send a 64 KB UDP packet, the default is just 8 KB
-		datagram.socket().setReceiveBufferSize(InternetPackets.size); // Be able to receive a 64 KB UDP packet
+		datagram.socket().setSendBufferSize(OldInternetPackets.size);    // Be able to send a 64 KB UDP packet, the default is just 8 KB
+		datagram.socket().setReceiveBufferSize(OldInternetPackets.size); // Be able to receive a 64 KB UDP packet
 
 		// Tell the channels to never block, and register them with the Selector
 		server.configureBlocking(false);

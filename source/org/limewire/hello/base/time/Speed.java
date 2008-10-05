@@ -16,7 +16,7 @@ public class Speed {
 		last = now;                             // Record the interval number we most recently added data to
 	}
 
-	/** Find out how fast we're going right now, in bytes/second. */
+	/** Find out how fast we're going right now, 0 or more bytes/second. */
 	public int speed() {
 
 		// Set now and zero expired spots in our array
@@ -40,8 +40,8 @@ public class Speed {
 		}
 
 		// Calculate the average speed in bytes/second
-		if (spots == 0) return 0;                                        // No distance, report no speed
-		else return (int)(((long)bytes * 1000) / ((long)spots * width)); // Multiply by 1000 because width is in milliseconds
+		if (spots == 0) return 0;                                               // No distance, report no speed
+		else return (int)(((long)bytes * Time.second) / ((long)spots * width)); // Multiply by 1000 because width is in milliseconds
 	}
 
 	// -------- Internal parts --------
@@ -63,7 +63,7 @@ public class Speed {
 	/** The number of spots in the array. */
 	private static final int length = 60;
 	/** The time, in milliseconds, we will spend in each spot. */
-	private static final int width = 1000;
+	private static final int width = (int)Time.second;
 
 	/*
 	 * The last and now variables are measured in units of interval numbers.

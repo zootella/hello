@@ -1,9 +1,11 @@
-package org.limewire.hello.base.internet;
+package org.limewire.hello.base.internet.socket;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
+import org.limewire.hello.base.data.Bin;
+import org.limewire.hello.base.internet.name.IpPort;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.time.Duration;
 import org.limewire.hello.base.time.Now;
@@ -15,12 +17,13 @@ public class Socket extends Close {
 
 	/** Open a new TCP socket connection to the given IP address and port number or throw an IOException. */
 	public Socket(IpPort ipPort) throws IOException {
-		Now birth = new Now();
+		Now start = new Now();
 		outgoing = true;
 		channel = SocketChannel.open();
 		if (!channel.connect(ipPort.toInetSocketAddress())) throw new IOException("connect false");
 		this.ipPort = ipPort;
-		connect = new Duration(birth);
+		size();
+		connect = new Duration(start);
 	}
 	
 	/** Make a new Socket for the given SocketChannel that just connected in to us. */
@@ -29,7 +32,16 @@ public class Socket extends Close {
 		outgoing = false;
 		this.channel = channel;
 		ipPort = new IpPort((InetSocketAddress)channel.socket().getRemoteSocketAddress());
+		size();
 		connect = null;
+	}
+	
+	/** Increase the socket buffer size if necessary. */
+	private void size() throws IOException {
+		if (channel.socket().getSendBufferSize() < Bin.medium)
+			channel.socket().setSendBufferSize(Bin.medium);
+		if (channel.socket().getReceiveBufferSize() < Bin.medium)
+			channel.socket().setReceiveBufferSize(Bin.medium);
 	}
 	
 	// Look

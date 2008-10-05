@@ -2,7 +2,7 @@ package org.limewire.hello.base.flow.valve;
 
 import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.encode.Hash;
-import org.limewire.hello.base.later.HashLater;
+import org.limewire.hello.base.encode.HashLater;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 
@@ -34,32 +34,7 @@ public class HashValve extends Close implements Valve {
 	}
 	
 	// Use
-
-	public boolean processing() {
-		if (closed()) return false;
-		return later != null;
-	}
-
-	public boolean canStop() {
-		if (closed()) return false;
-		return later != null && later.closed();
-	}
-	public void stop() throws Exception {
-		if (canStop()) {    // Our later finished
-			later.result(); // If an exception closed later, throw it
-			later = null;   // Discard the closed later, now in() and out() will work
-		}
-	}
 	
-	public boolean canStart() {
-		if (closed()) return false;
-		return later == null && in.hasData();
-	}
-	public void start() {
-		if (canStart())
-			later = new HashLater(update, hash, in);
-	}
-
 	public Bin in() {
 		if (later != null) return null; // later's worker thread is using our bin, keep it private
 		return in;
@@ -67,4 +42,28 @@ public class HashValve extends Close implements Valve {
 	private Bin in;
 	
 	public Bin out() { return null; }
+	
+	public void start() {
+		if (closed()) return;
+		if (later == null && in.hasData())
+			later = new HashLater(update, hash, in);
+	}
+
+	public void stop() throws Exception {
+		if (closed()) return;
+		if (later != null && later.closed()) { // Our later finished
+			later.result(); // If an exception closed later, throw it
+			distance += later.result().size;
+			later = null; // Discard the closed later, now in() and out() will work
+		}
+	}
+	
+	public boolean isEmpty() {
+		return
+			later == null && // No later using our bins
+			in.isEmpty();    // No data
+	}
+	
+	
+	public long distance;
 }

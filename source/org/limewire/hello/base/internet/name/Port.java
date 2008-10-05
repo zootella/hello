@@ -1,4 +1,4 @@
-package org.limewire.hello.base.internet;
+package org.limewire.hello.base.internet.name;
 
 import org.limewire.hello.base.exception.MessageException;
 

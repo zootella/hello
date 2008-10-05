@@ -1,8 +1,8 @@
 package org.limewire.hello.base.flow.valve;
 
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.internet.Socket;
-import org.limewire.hello.base.later.DownloadLater;
+import org.limewire.hello.base.internet.socket.DownloadLater;
+import org.limewire.hello.base.internet.socket.Socket;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 
@@ -35,31 +35,6 @@ public class DownloadValve extends Close implements Valve {
 	
 	// Use
 	
-	public boolean processing() {
-		if (closed()) return false;
-		return later != null;
-	}
-	
-	public boolean canStop() {
-		if (closed()) return false;
-		return later != null && later.closed();
-	}
-	public void stop() throws Exception {
-		if (canStop()) {    // Our later finished
-			later.result(); // If an exception closed later, throw it
-			later = null;   // Discard the closed later, now in() and out() will work
-		}
-	}
-	
-	public boolean canStart() {
-		if (closed()) return false;
-		return later == null && out.hasSpace();
-	}
-	public void start() {
-		if (canStart())
-			later = new DownloadLater(update, socket, out);
-	}
-
 	public Bin in() { return null; }
 	
 	public Bin out() {
@@ -67,4 +42,24 @@ public class DownloadValve extends Close implements Valve {
 		return out;
 	}
 	private Bin out;
+	
+	public void start() {
+		if (closed()) return;
+		if (later == null && out.hasSpace())
+			later = new DownloadLater(update, socket, out);
+	}
+	
+	public void stop() throws Exception {
+		if (closed()) return;
+		if (later != null && later.closed()) { // Our later finished
+			later.result(); // If an exception closed later, throw it
+			later = null; // Discard the closed later, now in() and out() will work
+		}
+	}
+	
+	public boolean isEmpty() {
+		return
+			later == null && // No later using our bins
+			out.isEmpty();   // No data
+	}
 }

@@ -8,9 +8,9 @@ import java.util.List;
 
 import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.internet.IpPort;
+import org.limewire.hello.base.internet.name.IpPort;
 
-public class InternetPackets {
+public class OldInternetPackets {
 
 	// -------- Factory settings --------
 	
@@ -27,21 +27,21 @@ public class InternetPackets {
 	 * 
 	 * @param select A link back up to the program's InternetSelect object, which has the Selector
 	 */
-	public InternetPackets(InternetSelect select) {
+	public OldInternetPackets(OldInternetSelect select) {
 		
 		// Save the given link up
 		this.select = select;
 
 		// Make lists to hold the Packet objects we will upload and download
-		upload = new LinkedList<Packet>();
-		download = new LinkedList<Packet>();
+		upload = new LinkedList<OldPacket>();
+		download = new LinkedList<OldPacket>();
 
 		// Make a 64 KB Bay to hold the data of a UDP packet we're downloading
 		bay = new Bay(size);
 	}
 	
 	/** A link up to the program's InternetSelect object that has the Selector. */
-	private InternetSelect select;
+	private OldInternetSelect select;
 
 	// -------- Upload packets --------
 	
@@ -54,7 +54,7 @@ public class InternetPackets {
 	public void upload(IpPort address, Data d) {
 
 		// Make a new Packet object from the given IP address and data
-		Packet packet = new Packet(address, d); // Copy the data into the new Packet object
+		OldPacket packet = new OldPacket(address, d); // Copy the data into the new Packet object
 
 		// Add it to our list of packets to send
 		upload.add(packet); // Add it to the end of the list so it will be sent after packets already there
@@ -64,7 +64,7 @@ public class InternetPackets {
 	}
 	
 	/** A List of Packet objects, the UDP packets we have to upload. */
-	private List<Packet> upload;
+	private List<OldPacket> upload;
 
 	/**
 	 * The Selector says the datagram channel wants some data.
@@ -76,7 +76,7 @@ public class InternetPackets {
 		while (true) {
 
 			// Get the first packet in our list of packets to send
-			Packet packet = upload.get(0); // The first Packet has index number 0
+			OldPacket packet = upload.get(0); // The first Packet has index number 0
 			if (packet == null) break; // The upload list is empty
 
 			// Give it to our channel to upload as a UDP packet
@@ -101,7 +101,7 @@ public class InternetPackets {
 	 * Code outside the Internet package must look at these packets and remove them from this list.
 	 * Otherwise, the list will grow as more and more packets arrive.
 	 */
-	public List<Packet> download;
+	public List<OldPacket> download;
 	
 	/**
 	 * The Selector says the datagram channel has data for us.
@@ -117,7 +117,7 @@ public class InternetPackets {
 			if (from == null) break; // The channel is out of packets
 
 			// Make it into a new Packet object, and add it to the download list
-			Packet packet = new Packet(from, bay.data()); // Copy the data from bay into the new Packet object
+			OldPacket packet = new OldPacket(from, bay.data()); // Copy the data from bay into the new Packet object
 			download.add(packet);
 		}
 	}

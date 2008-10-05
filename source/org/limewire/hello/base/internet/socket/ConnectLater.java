@@ -1,31 +1,31 @@
-package org.limewire.hello.base.later;
+package org.limewire.hello.base.internet.socket;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.limewire.hello.base.internet.Server;
-import org.limewire.hello.base.internet.Socket;
+import org.limewire.hello.base.internet.name.IpPort;
+import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 
-public class AcceptLater extends Later {
-
+public class ConnectLater extends Later {
+	
 	// Make
 
-	/** Wait for a peer to make a TCP socket connection to server. */
-	public AcceptLater(Update above, Server server) {
+	/** Make a new outgoing TCP socket connection to ipPort. */
+	public ConnectLater(Update above, IpPort ipPort) {
 		this.above = above; // We'll tell above when we're done
 		
 		// Save the input
-		this.server = server;
+		this.ipPort = ipPort;
 		
 		work = new MySwingWorker();
 		work.execute(); // Have a worker thread call doInBackground() now
 	}
 	
-	/** Our bound server socket a peer will connect to. */
-	private final Server server;
+	/** The IP address and port number to connect to. */
+	public final IpPort ipPort;
 
 	// Result
 	
-	/** The socket that connected to server, it's yours to use and then close, or throws the exception that made us give up. */
+	/** The socket we connected, its yours to use and then close, or throws the exception that made us give up. */
 	public Socket result() throws Exception { return (Socket)check(socket); }
 	private Socket socket;
 
@@ -39,9 +39,9 @@ public class AcceptLater extends Later {
 		// A worker thread will call this method
 		public Void doInBackground() {
 			try {
-
-				// Wait here until a peer connects to us
-				workSocket = new Socket(server.channel.accept());
+				
+				// Make and connect a new socket to the given IP address and port number
+				workSocket = new Socket(ipPort);
 				
 			} catch (Exception e) { exception = e; } // Catch the exception our code threw
 			return null;

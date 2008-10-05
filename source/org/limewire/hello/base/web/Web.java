@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.limewire.hello.base.file.Path;
-import org.limewire.hello.base.internet.old.Internet;
+import org.limewire.hello.base.internet.old.OldInternet;
 import org.limewire.hello.base.state.Update;
 
 public class Web {
@@ -22,14 +22,14 @@ public class Web {
 	 * 
 	 * @param internet A link to the program's Internet object
 	 */
-	public Web(Internet internet) {
+	public Web(OldInternet internet) {
 		web = this;
 		this.internet = internet;          // Save the link to the program's Internet object
 		list = new LinkedList<WebDownload>(); // Make a new empty List to hold Download objects
 	}
 	
 	/** A link to the program's Internet object. */
-	public Internet internet;
+	public OldInternet internet;
 	
 	/** The program's List of all the Download objects. */
 	public List<WebDownload> list;

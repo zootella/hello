@@ -3,7 +3,7 @@ package org.limewire.hello.base.internet.tube;
 import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.later.DownloadLater;
+import org.limewire.hello.base.internet.socket.DownloadLater;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;

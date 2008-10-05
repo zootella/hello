@@ -1,8 +1,6 @@
-package org.limewire.hello.base.later;
+package org.limewire.hello.base.state;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.limewire.hello.base.state.Close;
-import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.time.Now;
 
 /** The core of an object that extends Later. */

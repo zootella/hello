@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.limewire.hello.base.later.FeedLater;
+import org.limewire.hello.base.internet.web.FeedLater;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Model;
 import org.limewire.hello.base.state.Receive;

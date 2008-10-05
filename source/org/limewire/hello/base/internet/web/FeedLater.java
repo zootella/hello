@@ -1,51 +1,55 @@
-package org.limewire.hello.base.later;
+package org.limewire.hello.base.internet.web;
+
+import java.net.URL;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.internet.Socket;
-import org.limewire.hello.base.move.Move;
+import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
+import org.limewire.hello.base.web.Url;
 
-public class UploadLater extends Later {
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
+
+public class FeedLater extends Later {
 	
 	// Make
 
-	/** Upload 1 or more bytes from bin to socket, don't look at bin until this is closed. */
-	public UploadLater(Update above, Socket socket, Bin bin) {
+	/** Download and parse the RSS feed at url. */
+	public FeedLater(Update above, Url url) {
 		this.above = above; // We'll tell above when we're done
 		
 		// Save the input
-		this.socket = socket;
-		this.bin = bin;
-
+		this.url = url;
+		
 		work = new MySwingWorker();
 		work.execute(); // Have a worker thread call doInBackground() now
 	}
 
-	/** The socket we upload to. */
-	private final Socket socket;
-	/** The Bin we take the data from. */
-	private final Bin bin;
+	/** The web address of the RSS feed. */
+	public final Url url;
 
 	// Result
 	
-	/** How much data we uploaded and how long it took, or throws the exception that made us give up. */
-	public Move result() throws Exception { return (Move)check(move); }
-	private Move move;
-	
-	// Inside
+	/** The SyndFeed we downloaded and parsed, or throws the exception that made this give up. */
+	public SyndFeed result() throws Exception { return (SyndFeed)check(feed); }
+	private SyndFeed feed;
 
+	// Inside
+	
 	/** Our SwingWorker with a worker thread that runs our code that blocks. */
 	private class MySwingWorker extends SwingWorker<Void, Void> {
 		private Exception workException; // References the worker thread can safely set
-		private Move workMove;
+		private SyndFeed workFeed;
 
 		// A worker thread will call this method
 		public Void doInBackground() {
 			try {
 				
-				// Upload 1 or more bytes from bin to socket
-				workMove = bin.upload(socket);
+				// Download and parse the RSS feed
+				URL u = new URL(url.toString());
+				SyndFeedInput input = new SyndFeedInput();
+				workFeed = input.build(new XmlReader(u));
 
 			} catch (Exception e) { workException = e; } // Catch the exception our code threw
 			return null;
@@ -58,7 +62,7 @@ public class UploadLater extends Later {
 			if (workException != null) exception = workException; // Get the exception our code threw
 			if (exception == null) { // No exception, save what worker did
 				
-				move = workMove;
+				feed = workFeed;
 			}
 			close(); // We're done
 			above.send(); // Tell update we've changed

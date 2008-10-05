@@ -1,4 +1,4 @@
-package org.limewire.hello.base.internet;
+package org.limewire.hello.base.internet.name;
 
 
 import java.net.InetAddress;

@@ -27,7 +27,7 @@ import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.desktop.Clipboard;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.user.Cell;
-import org.limewire.hello.base.user.Describe;
+import org.limewire.hello.base.user.OldDescribe;
 import org.limewire.hello.base.user.Panel;
 import org.limewire.hello.base.user.Refresh;
 import org.limewire.hello.base.user.Row;
@@ -437,9 +437,9 @@ public class DownloadTab extends Close {
 		int selected = table.jtable.getSelectedRowCount(); // Find out how many are selected
 
 		// Compose status bar text like "3 files  2 to get  1 selected", and show it to the user
-		String s = Describe.number(files, "file");
-		if (get      != 0) s += "  " + Describe.commas(get)      + " to get";
-		if (selected != 0) s += "  " + Describe.commas(selected) + " selected";
+		String s = OldDescribe.number(files, "file");
+		if (get      != 0) s += "  " + OldDescribe.commas(get)      + " to get";
+		if (selected != 0) s += "  " + OldDescribe.commas(selected) + " selected";
 		Refresh.text(status, s); // Have the JLabel which is our status bar say it
 	}
 	

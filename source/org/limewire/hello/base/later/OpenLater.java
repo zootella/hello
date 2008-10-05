@@ -3,6 +3,7 @@ package org.limewire.hello.base.later;
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.Path;
+import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 
 public class OpenLater extends Later {

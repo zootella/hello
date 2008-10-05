@@ -1,8 +1,6 @@
 package org.limewire.hello.base.flow;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -13,7 +11,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.limewire.hello.base.state.Close;
@@ -49,9 +46,11 @@ public class HashDialog extends Close {
 		path = new JTextField(); // Path box
 		new TextMenu(path);
 		status = new SelectTextArea(); // Status text
+		size = new SelectTextArea();
 		value = new SelectTextArea();
 		browse = new BrowseAction(); // Actions behind buttons
 		start = new StartAction();
+		stop = new StopAction();
 		reset = new ResetAction();
 		close = new CloseAction();
 
@@ -61,17 +60,20 @@ public class HashDialog extends Close {
 		bar1.add(Cell.wrap(new JButton(browse)));
 		Panel bar2 = Panel.row();
 		bar2.add(Cell.wrap(new JButton(start)));
+		bar2.add(Cell.wrap(new JButton(stop)));
 		bar2.add(Cell.wrap(new JButton(reset)));
 		bar2.add(Cell.wrap(new JButton(close)));
 		Panel panel = new Panel();
 		panel.border();
 		panel.place(0, 0, 1, 1, 0, 0, 0, 0, Cell.wrap(new JLabel("Path")));
 		panel.place(0, 1, 1, 1, 1, 0, 0, 0, Cell.wrap(new JLabel("Status")));
-		panel.place(0, 2, 1, 1, 1, 0, 0, 0, Cell.wrap(new JLabel("Value")));
+		panel.place(0, 2, 1, 1, 1, 0, 0, 0, Cell.wrap(new JLabel("Size")));
+		panel.place(0, 3, 1, 1, 1, 0, 0, 0, Cell.wrap(new JLabel("Value")));
 		panel.place(1, 0, 1, 1, 0, 1, 0, 0, Cell.wrap(bar1.jpanel).fillWide());
 		panel.place(1, 1, 1, 1, 1, 1, 0, 0, Cell.wrap(status).fillWide());
-		panel.place(1, 2, 1, 1, 1, 1, 0, 0, Cell.wrap(value).fillWide());
-		panel.place(1, 3, 1, 1, 1, 1, 0, 0, Cell.wrap(bar2.jpanel).lowerLeft().grow());
+		panel.place(1, 2, 1, 1, 1, 1, 0, 0, Cell.wrap(size).fillWide());
+		panel.place(1, 3, 1, 1, 1, 1, 0, 0, Cell.wrap(value).fillWide());
+		panel.place(1, 4, 1, 1, 1, 1, 0, 0, Cell.wrap(bar2.jpanel).lowerLeft().grow());
 
 		// Make our Hash object that will do what this dialog shows
 		hash = new Hash();
@@ -97,12 +99,16 @@ public class HashDialog extends Close {
 	private final JTextField path;
 	/** The hash status text output box. */
 	private final SelectTextArea status;
+	/** The hash size text output box. */
+	private final SelectTextArea size;
 	/** The hash value text output box. */
 	private final SelectTextArea value;
 	/** The Action behind the Browse button. */
 	private final Action browse;
 	/** The Action behind the Start button. */
 	private final Action start;
+	/** The Action behind the Stop button. */
+	private final Action stop;
 	/** The Action behind the Reset button. */
 	private final Action reset;
 	/** The Action behind the Close button. */
@@ -145,6 +151,14 @@ public class HashDialog extends Close {
 			hash.start(path.getText());
 		}
 	}
+	
+	// The user clicked the Stop button
+	private class StopAction extends AbstractAction {
+		public StopAction() { super("Stop"); } // Specify the button text
+		public void actionPerformed(ActionEvent a) {
+			hash.stop();
+		}
+	}
 
 	// The user clicked the Reset button
 	private class ResetAction extends AbstractAction {
@@ -163,11 +177,15 @@ public class HashDialog extends Close {
 		// The Model beneath changed, we need to update what we show the user
 		public void refresh() {
 			Refresh.text(status, hash.model.status());
-			Refresh.text(value,  hash.model.value());
+			Refresh.text(size, hash.model.size());
+			Refresh.text(value, hash.model.value());
 			
-			Refresh.edit(path,   hash.model.canStart());
+			Refresh.edit(path, hash.model.canStart());
+			
 			Refresh.can(browse, hash.model.canStart());
-			Refresh.can(start,  hash.model.canStart());
+			Refresh.can(start, hash.model.canStart());
+			Refresh.can(reset, hash.model.canReset());
+			Refresh.can(stop, hash.model.canStop());
 		}
 
 		// The Model beneath closed, take this View off the screen
