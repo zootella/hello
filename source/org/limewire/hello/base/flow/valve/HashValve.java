@@ -33,7 +33,13 @@ public class HashValve extends Close implements Valve {
 		}
 	}
 	
-	// Use
+	// Look
+	
+	/** How many bytes this HashValve has finished hashing, 0 or more. */
+	public long distance() { return distance; }
+	private long distance;
+	
+	// Valve
 	
 	public Bin in() {
 		if (later != null) return null; // later's worker thread is using our bin, keep it private
@@ -63,7 +69,4 @@ public class HashValve extends Close implements Valve {
 			later == null && // No later using our bins
 			in.isEmpty();    // No data
 	}
-	
-	
-	public long distance;
 }

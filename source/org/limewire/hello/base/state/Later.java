@@ -28,7 +28,7 @@ public abstract class Later extends Close {
 
 	/** Make sure we closed without exception and o isn't null before returning it as a result. */
 	protected Object check(Object o) throws Exception {
-		if (!closed()) throw new IllegalStateException(); // We're not closed yet
+		if (!closed()) throw new IllegalStateException(); // Must be closed
 		if (exception != null) throw exception;           // We had an exception, throw it instead of returning o
 		if (o == null) throw new NullPointerException();  // Never return null
 		return o;

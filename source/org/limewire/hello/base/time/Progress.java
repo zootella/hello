@@ -1,7 +1,5 @@
-package org.limewire.hello.base.flow;
+package org.limewire.hello.base.time;
 
-import org.limewire.hello.base.time.Speed;
-import org.limewire.hello.base.time.Time;
 import org.limewire.hello.base.user.Describe;
 
 public class Progress {
@@ -118,13 +116,13 @@ public class Progress {
 
 	// Describe
 
-	/** Describe our status like "12 sec at 2.34 KB/s to verb", "Verbing at 2.34 KB/s", or just "Verbing". */
+	/** Describe our status like "12 sec at 2.34 KB/s to verb", "Verbing at 2.34 KB/s", or just "". */
 	public String describeStatus() {
 		int arrive = arrive(); // -1 can't predict
 		int speed  = speed();  //  0 no speed
 		if (arrive != -1 && speed > 0) return Describe.time(arrive * Time.second) + " at " + Describe.speed(speed) + " to " + verb; //  "12 sec at 2.34 KB/s to verb"
 		else if            (speed > 0) return                             verbing + " at " + Describe.speed(speed);                 // "Verbing at 2.34 KB/s"
-		else                           return                             verbing;                                                  // "Verbing"
+		else                           return "";                                                                                   // ""
 	}
 
 	/** Describe our size like "12% 145 KB/1,154 KB", "Verbed 145 KB", or just "". */

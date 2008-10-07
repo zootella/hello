@@ -11,7 +11,7 @@ import org.limewire.hello.base.state.Close;
 
 /** An open file on the disk with access to its data. */
 public class File extends Close {
-	
+
 	// Open
 	
 	/** Make and open a new empty file at the given available path, or throw an IOException. */

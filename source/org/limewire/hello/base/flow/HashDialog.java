@@ -22,7 +22,7 @@ import org.limewire.hello.base.user.Refresh;
 import org.limewire.hello.base.user.SelectTextArea;
 import org.limewire.hello.base.user.TextMenu;
 
-/** The Hash dialog box on the screen that lets the user hash a file. */
+/** A Hash dialog on the screen that views a HashMachine below. */
 public class HashDialog extends Close {
 	
 	// Program
@@ -76,7 +76,7 @@ public class HashDialog extends Close {
 		panel.place(1, 4, 1, 1, 1, 1, 0, 0, Cell.wrap(bar2.jpanel).lowerLeft().grow());
 
 		// Make our Hash object that will do what this dialog shows
-		hash = new Hash();
+		hash = new HashMachine();
 
 		// Make our inner View object and connect the Feed object's model to it
 		view = new MyView();
@@ -91,7 +91,7 @@ public class HashDialog extends Close {
 	}
 	
 	/** The Hash object this dialog is a view of. */
-	private final Hash hash;
+	private final HashMachine hash;
 
 	/** The dialog box on the screen. */
 	private final JDialog dialog;

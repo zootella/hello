@@ -1,7 +1,8 @@
-package org.limewire.hello.base.flow;
+package org.limewire.hello.base.time;
 
 import org.junit.Test;
 import org.junit.Assert;
+import org.limewire.hello.base.time.Progress;
 import org.limewire.hello.base.time.Size;
 
 public class ProgressTest {
