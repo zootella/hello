@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.limewire.hello.base.flow.Pair;
 
 public class PairTest {
 

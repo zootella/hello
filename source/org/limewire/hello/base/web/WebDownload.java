@@ -62,7 +62,7 @@ public class WebDownload {
 	/** The Dns object we are using to find out the Web server's IP address. */
 	private DomainLater dns;
 	/** The Get object we are using to request the file from the Web server. */
-	private Get get;
+	private OldGet get;
 	
 	private Update update;
 
@@ -123,7 +123,7 @@ public class WebDownload {
 					if (dns == null) dns = new DomainLater(hereup, url.site);        // If we don't have our Dns object yet, make it
 				} else {                                                              // We know the Web server's IP address
 					if (save == null) save = new Save(folder);                        // If we don't have our temporary file yet, open it
-					if (get == null) get = new Get(web.internet, url, ip, save.file); // If we don't have our Get request yet, make it
+					if (get == null) get = new OldGet(web.internet, url, ip, save.file); // If we don't have our Get request yet, make it
 				}
 			}
 			

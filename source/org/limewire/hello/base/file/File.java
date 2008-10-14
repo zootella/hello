@@ -12,48 +12,38 @@ import org.limewire.hello.base.state.Close;
 /** An open file on the disk with access to its data. */
 public class File extends Close {
 
-	// Open
-	
-	/** Make and open a new empty file at the given available path, or throw an IOException. */
-	public static File make(Path path) throws IOException {
-		if (path.exists()) throw new IOException("exists"); // Make sure the given path is available
-		return new File(path, "rw", null);
-	}
-	
-	/** Open the file at path filled with data with read "r" or read and write "rw" access, or throw an IOException. */
-	public static File open(Path path, String access) throws IOException { return open(path, access, null); }
-	/** Open the file at path with pattern data inside with read "r" or read and write "rw" access, or throw an IOException. */
-	public static File open(Path path, String access, StripePattern pattern) throws IOException {
-		if (!path.existsFile()) throw new IOException("not found"); // Make sure there is a file at the given path
-		return new File(path, access, pattern);
-	}
+	// Make
 
-	/** Make or open the file at path filled with pattern data with the given access, or throw an IOException. */
-	private File(Path path, String access, StripePattern pattern) throws IOException {
+	/** Make and open the file at the given path. */
+	public File(Open open) throws IOException {
+		
+		// Get and save the path
+		path = open.path;
 
+		// Enforce and check how we are told to open the file
+		if (open.how == Open.overwrite) path.delete(); // Delete a file or empty folder at path, or throw an IOException
+		if ((open.how == Open.overwrite || open.how == Open.make) && path.exists()) throw new IOException("exists"); // Make requires available path
+		if ((open.how == Open.read || open.how == Open.write) && !path.existsFile()) throw new IOException("not found"); // Open requires file at path
+		
 		// Make or open the file
-		RandomAccessFile file = new RandomAccessFile(path.toFile(), access);
+		String access = "rw"; // For the make, overwrite, and write commands, get read and write access
+		if (open.how == Open.read) access = "r"; // For the read command, get read access
+		file = new RandomAccessFile(path.file, access);
 
-		// If no pattern given, make one
-		if (pattern == null) {
+		// Get or create and save the pattern
+		StripePattern pattern = open.pattern;
+		if (pattern == null) { // If no pattern given in path, make one
 			pattern = new StripePattern(); // If file is empty, pattern is ready
 			long size = file.getChannel().size(); // If the file has gaps, size will be as if they are full
 			if (size > 0) pattern = pattern.add(new Stripe(0, size)); // Mark the whole file as full
 		}
-
-		// Save everything in this new File object
-		this.path = path;
-		this.access = access;
-		this.file = file;
 		this.pattern = pattern;
 	}
-	
-	// Inside
+
+	// Look
 	
 	/** The Path to our open file on the disk. */
 	public final Path path;
-	/** We have "r" read or "rw" read and write access on the file. */
-	public final String access;
 	/** The Java RandomAccessFile object that gives us access to the data in our file. */
 	public final RandomAccessFile file;
 	/** A StripePattern that shows what parts of this File have data, and which parts are gaps. */
@@ -120,7 +110,7 @@ public class File extends Close {
 	
 	/** Open the file at path, copy its contents into memory, and close it. */
 	public static Data data(Path path) throws IOException {
-		File f = open(path, "r"); // We only need read access
+		File f = new File(new Open(path, null, Open.read));
 		Data d = f.read(); // Copy the file's contents into memory
 		f.close();
 		return d;
@@ -128,7 +118,7 @@ public class File extends Close {
 
 	/** Save d to a file at path, overwriting one already there. */
 	public static void save(Path path, Data d) throws IOException {
-		File f = make(path);
+		File f = new File(new Open(path, null, Open.overwrite));
 		f.write(0, d);
 		f.file.getChannel().truncate(d.size()); // Chop the file off after that
 		f.close();

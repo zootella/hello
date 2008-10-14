@@ -26,7 +26,7 @@ public class Window {
 	 * @param program A link up to the Program object this new Window object is a part of
 	 */
 	public Window(Program program) {
-
+		
 		// Save the link back up to the Program object
 		this.program = program;
 

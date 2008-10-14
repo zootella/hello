@@ -1,10 +1,7 @@
 package org.limewire.hello.base.desktop;
 
-
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.web.Url;
@@ -16,7 +13,7 @@ public class Open {
 	/** Open the file at the given path, as though the user had double-clicked it on the desktop. */
 	public static void file(Path path) {
 		try {
-			Desktop.getDesktop().open(path.toFile());
+			Desktop.getDesktop().open(path.file);
 		} catch (IOException e) {} // Don't do anything if it doesn't work
 	}
 

@@ -1,7 +1,6 @@
 package org.limewire.hello.base.state;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.limewire.hello.base.time.Now;
 
 /** The core of an object that extends Later. */
 public abstract class Later extends Close {
@@ -28,20 +27,9 @@ public abstract class Later extends Close {
 
 	/** Make sure we closed without exception and o isn't null before returning it as a result. */
 	protected Object check(Object o) throws Exception {
-		if (!closed()) throw new IllegalStateException(); // Must be closed
-		if (exception != null) throw exception;           // We had an exception, throw it instead of returning o
-		if (o == null) throw new NullPointerException();  // Never return null
+		if (!closed()) throw new IllegalStateException();         // Don't call this until closed
+		if (exception != null) throw exception;                   // An exception made us give up
+		if (o == null) throw new IllegalStateException("cancel"); // Closed without exception or result, must have been cancelled
 		return o;
-	}
-	
-	
-	
-	// Time
-	
-	/** The time when this Later object started trying to do something that takes awhile. */
-	public final Now birth;
-	
-	public Later() {
-		birth = new Now();
 	}
 }

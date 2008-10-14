@@ -1,10 +1,8 @@
 package org.limewire.hello.base.file;
 
-
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.pattern.Stripe;
 import org.limewire.hello.base.pattern.StripePattern;
@@ -23,7 +21,7 @@ public class OldFile {
 			
 		// Save the Path were our file is, and open it
 		this.path = path;
-		file = new RandomAccessFile(path.toFile(), access);
+		file = new RandomAccessFile(path.file, access);
 		
 		// Save the given StripePattern
 		this.pattern = pattern;
@@ -37,7 +35,7 @@ public class OldFile {
 			
 		// Save the Path where this File is, and open it
 		this.path = path;
-		file = new RandomAccessFile(path.toFile(), access);
+		file = new RandomAccessFile(path.file, access);
 		
 		// Make our StripePattern which shows where data is in this File
 		pattern = new StripePattern(); // If file is empty, pattern is ready

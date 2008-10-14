@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.internet.name.IpPort;
-import org.limewire.hello.base.move.Move;
+import org.limewire.hello.base.move.PacketMove;
 
 public class Packet {
 	
@@ -38,7 +38,7 @@ public class Packet {
 	/** true if we sent this Packet, false if we received it. */
 	public final boolean outgoing;
 	/** How big this Packet is and how long it took to send, or how long we waited for it. */
-	public final Move move;
+	public final PacketMove move;
 	/** The IP address and port number we sent this Packet to or received it from. */
 	public final IpPort ipPort;
 	/** An empty bin after sending this packet, or the data of the packet we received. */

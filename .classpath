@@ -6,9 +6,15 @@
 	<classpathentry kind="src" path="stock"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="library/rome.jar"/>
 	<classpathentry kind="lib" path="library/jdom.jar"/>
 	<classpathentry kind="lib" path="library/swing-worker-1.2.jar"/>
 	<classpathentry kind="lib" path="library/itunes-0.4.jar"/>
+	<classpathentry kind="lib" path="library/apache-mime4j-0.4.jar"/>
+	<classpathentry kind="lib" path="library/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="library/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="library/httpclient-4.0-beta1.jar"/>
+	<classpathentry kind="lib" path="library/httpcore-4.0-beta2.jar"/>
+	<classpathentry kind="lib" path="library/httpmime-4.0-beta1.jar"/>
+	<classpathentry kind="lib" path="library/rome-1.0RC1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

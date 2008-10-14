@@ -3,6 +3,7 @@ package org.limewire.hello.base.internet.socket;
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.move.Move;
+import org.limewire.hello.base.pattern.Range;
 import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 
@@ -11,11 +12,12 @@ public class UploadLater extends Later {
 	// Make
 
 	/** Upload 1 or more bytes from bin to socket, don't look at bin until this is closed. */
-	public UploadLater(Update above, Socket socket, Bin bin) {
+	public UploadLater(Update above, Socket socket, Range range, Bin bin) {
 		this.above = above; // We'll tell above when we're done
 		
 		// Save the input
 		this.socket = socket;
+		this.range = range;
 		this.bin = bin;
 
 		work = new MySwingWorker();
@@ -24,6 +26,8 @@ public class UploadLater extends Later {
 
 	/** The socket we upload to. */
 	private final Socket socket;
+	/** Limit how much we upload. */
+	private final Range range;
 	/** The Bin we take the data from. */
 	private final Bin bin;
 
@@ -45,7 +49,7 @@ public class UploadLater extends Later {
 			try {
 				
 				// Upload 1 or more bytes from bin to socket
-				workMove = bin.upload(socket);
+				workMove = bin.upload(socket, range);
 
 			} catch (Exception e) { workException = e; } // Catch the exception our code threw
 			return null;
