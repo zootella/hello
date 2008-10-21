@@ -1,31 +1,29 @@
 package org.limewire.hello.base.encode;
 
-import java.io.IOException;
-
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.Open;
 import org.limewire.hello.base.file.OpenLater;
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.file.ReadValve;
-import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.time.Progress;
-import org.limewire.hello.base.valve.ValveList;
+import org.limewire.hello.base.valve.Flow;
 
-/** Hash data in one file and see the progress. */
-public class HashTask extends Close {
+/** Hash data in a file and see the progress. */
+public class HashFlow extends Close {
 	
 	// Make
 	
-	/** Hash some data in a file. */
-	public HashTask(Update up, String path, Stripe stripe) {
+	/** Hash range data in the file at path. */
+	public HashFlow(Update up, String path, Range range) {
 		this.up = up;
 		update = new Update(new MyReceive());
 		this.path = path;
-		this.stripe = stripe;
+		this.range = range;
 		progress = new Progress("hash", "Hashing", "Hashed");
 		update.send(); // Move things forward
 	}
@@ -35,19 +33,16 @@ public class HashTask extends Close {
 	/** Our Update we give to objects below to tell us when they've changed. */
 	private final Update update;
 	
-	/** The path to the File we hash. */
+	// Open path into file with open
 	private final String path;
-	/** The open File we hash. */
-	private File file;
-	/** The stripe in file we hash, null to hash the whole thing. */
-	private Stripe stripe;
-
-	/** Opens the file at path, null after we use it. */
 	private OpenLater open;
-	
+	private File file;
+
+	/** The Range in file we hash. */
+	private Range range;
+
 	/** Our list of Valve objects that read file and hash it, null before we make it. */
-	private ValveList list;
-	
+	private Flow list;
 	/** The first Valve in list, reads data from file. */
 	private ReadValve readValve;
 	/** The last Valve in list, hashes data. */
@@ -92,17 +87,16 @@ public class HashTask extends Close {
 					open = new OpenLater(update, new Open(new Path(path), null, Open.read));
 				if (file == null && open != null && open.closed()) {
 					file = open.result();
-					if (stripe == null) stripe = file.stripe();
-					if (stripe == null) throw new IOException("empty");
-					progress.size(stripe.size); // Tell progress how much we're going to hash
+					range = range.know(file.size()); // Update range now that we know the file size
+					progress.size(range.size); // Tell progress how much we're going to hash
 					up.send();
 				}
 
 				// List
 				if (list == null && file != null) {
-					list = new ValveList(update, false, false);
-					readValve = new ReadValve(update, file, stripe);
-					hashValve = new HashValve(update);
+					list = new Flow(update, false, false);
+					readValve = new ReadValve(update, file, range);
+					hashValve = new HashValve(update, range);
 					list.list.add(readValve);
 					list.list.add(hashValve);
 					up.send();
@@ -111,7 +105,7 @@ public class HashTask extends Close {
 				// Move data down the list and get progress
 				if (list != null) {
 					list.move();
-					progress.done(hashValve.distance()); // Tell progress hashValve's distance
+					progress.done(hashValve.meter().done()); // Tell progress hashValve's done distance
 					up.send();
 				}
 

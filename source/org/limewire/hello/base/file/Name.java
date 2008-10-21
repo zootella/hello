@@ -6,7 +6,7 @@ import org.limewire.hello.base.data.Text;
 import org.limewire.hello.base.data.TextSplit;
 import org.limewire.hello.base.web.Url;
 
-// holds a file name and extension, like "name.ext"
+/** A file name and extension, like "name.ext". */
 public class Name {
 	
 	// -------- Make a Name object --------

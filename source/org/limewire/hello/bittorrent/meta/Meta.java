@@ -9,7 +9,7 @@ import org.limewire.hello.base.encode.Hash;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.MessageException;
 import org.limewire.hello.base.file.PathName;
-import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.size.Stripe;
 import org.limewire.hello.base.web.Url;
 import org.limewire.hello.bittorrent.bencode.Bencoded;
 

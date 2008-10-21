@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.limewire.hello.base.data.Bin;
 import org.limewire.hello.base.internet.name.IpPort;
-import org.limewire.hello.base.move.PacketMove;
+import org.limewire.hello.base.size.PacketMove;
 
 public class Packet {
 	

@@ -2,18 +2,17 @@ package org.limewire.hello.base.download;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.move.Move;
-import org.limewire.hello.base.pattern.Range;
-import org.limewire.hello.base.pattern.Size;
+import org.limewire.hello.base.size.Move;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 
-public class DownloadGetLater extends Later {
+public class GetLater extends Later {
 	
 	// Make
 
 	/** Download 1 to size bytes from get to bin, don't look at bin until this is closed. */
-	public DownloadGetLater(Update above, Get get, Range range, Bin bin) {
+	public GetLater(Update above, Get get, Range range, Bin bin) {
 		this.above = above; // We'll tell above when we're done
 		
 		// Save the input

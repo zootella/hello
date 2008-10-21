@@ -2,9 +2,8 @@ package org.limewire.hello.base.file;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.move.StripeMove;
-import org.limewire.hello.base.pattern.Range;
-import org.limewire.hello.base.pattern.Trip;
+import org.limewire.hello.base.size.Range;
+import org.limewire.hello.base.size.Move;
 import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 
@@ -12,7 +11,7 @@ public class WriteLater extends Later {
 	
 	// Make
 
-	/** Write 1 or more bytes from bin to trip in file, don't look at bin until this is closed. */
+	/** Write 1 or more bytes from bin to range in file, don't look at bin until this is closed. */
 	public WriteLater(Update above, File file, Range range, Bin bin) {
 		this.above = above; // We'll tell above when we're done
 		
@@ -35,15 +34,15 @@ public class WriteLater extends Later {
 	// Result
 	
 	/** How much of stripe we wrote and how long it took, or throws the exception that made us give up. */
-	public StripeMove result() throws Exception { return (StripeMove)check(move); }
-	private StripeMove move;
+	public Move result() throws Exception { return (Move)check(move); }
+	private Move move;
 	
 	// Inside
 
 	/** Our SwingWorker with a worker thread that runs our code that blocks. */
 	private class MySwingWorker extends SwingWorker<Void, Void> {
 		private Exception workException; // References the worker thread can safely set
-		private StripeMove workMove;
+		private Move workMove;
 
 		// A worker thread will call this method
 		public Void doInBackground() {
@@ -64,6 +63,7 @@ public class WriteLater extends Later {
 			if (exception == null) { // No exception, save what worker did
 				
 				move = workMove;
+				file.add(move.stripe); // Record the Stripe of data we wrote in file's StripePattern
 			}
 			close(); // We're done
 			above.send(); // Tell update we've changed

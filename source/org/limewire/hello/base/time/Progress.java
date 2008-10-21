@@ -45,10 +45,10 @@ public class Progress {
 	
 	/** true once this Progress size has been set to 1 or more, false if never set, false if set to 0. */
 	public boolean hasSize() { return size > 0; }
-	/** The total size goal of this Progress, 1 or more, -1 unknown. */
+	/** The total size goal of this Progress, 0 or more, -1 unknown. */
 	public long size() { return size; }
 	private long size;
-	/** Set the total size goal of this Progress once before setting done, or never, 1 or more. */
+	/** Set the total size goal of this Progress once before setting done, or never, 0 or more. */
 	public void size(long s) {
 		if (s < 0) throw new IndexOutOfBoundsException();
 		if (hasSize() || done != 0) throw new IllegalStateException();
@@ -130,14 +130,16 @@ public class Progress {
 		int  percent = percent(); // -1 unknown, 0 not the first percent yet, 100 done
 		long done    = done();    //  0 nothing yet
 		long size    = size();    // -1 unknown
-		if (size == -1 || percent == -1) {                                                                    // Size unknown
-			if      (done     >   0) return   verbed + " " + Describe.size(done);                             //         "Verbed 1 KB" Counting up done
-			else                     return "";                                                               //                    "" No size, done, or percent
-		} else {                                                                                              // Size known
+		if (size != -1 && percent != -1) {                                                                    // Size and percent known
 			if      (done    ==   0) return                                              Describe.size(size); //            "1,154 KB" Nothing done yet
 			else if (percent ==   0) return                  Describe.size(done) + "/" + Describe.size(size); //     "145 KB/1,154 KB" Not 1 percent yet
 			else if (percent == 100) return                                              Describe.size(size); //            "1,154 KB" All done
 			else                     return percent + "% " + Describe.size(done) + "/" + Describe.size(size); // "12% 145 KB/1,154 KB" 1 through 99 percent
+		} else if (size != -1) {                                                                              // Just size
+			                         return                                              Describe.size(size); //            "1,154 KB" Just size
+		} else {                                                                                              // Just done
+			if      (done     >   0) return   verbed + " " + Describe.size(done);                             //         "Verbed 1 KB" Counting up done
+			else                     return "";                                                               //                    "" No size, done, or percent
 		}
 	}
 }

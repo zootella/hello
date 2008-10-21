@@ -1,4 +1,4 @@
-package org.limewire.hello.base.move;
+package org.limewire.hello.base.size;
 
 import org.limewire.hello.base.internet.name.IpPort;
 import org.limewire.hello.base.time.Duration;

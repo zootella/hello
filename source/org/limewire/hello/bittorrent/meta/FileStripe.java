@@ -1,6 +1,6 @@
 package org.limewire.hello.bittorrent.meta;
 
-import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.size.Stripe;
 
 /** A stripe of data in a single file in a torrent. */
 public class FileStripe {

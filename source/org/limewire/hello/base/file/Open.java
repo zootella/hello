@@ -1,6 +1,6 @@
 package org.limewire.hello.base.file;
 
-import org.limewire.hello.base.pattern.StripePattern;
+import org.limewire.hello.base.size.StripePattern;
 
 /** How to make or open a File. */
 public class Open {

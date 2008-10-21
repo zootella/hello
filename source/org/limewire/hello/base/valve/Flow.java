@@ -8,12 +8,12 @@ import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 
 /** A list of Valve objects that data flows through. */
-public class ValveList extends Close {
+public class Flow extends Close {
 
 	// Make
 	
 	/** Make a new list of Valve objects that will take in and or put out data. */
-	public ValveList(Update update, boolean in, boolean out) {
+	public Flow(Update update, boolean in, boolean out) {
 		this.update = update;
 		list = new LinkedList<Valve>();
 		if (in) this.in = Bin.medium(); // Make the requested bins

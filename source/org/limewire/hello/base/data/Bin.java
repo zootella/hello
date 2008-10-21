@@ -12,12 +12,12 @@ import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.internet.name.IpPort;
 import org.limewire.hello.base.internet.packet.ListenPacket;
 import org.limewire.hello.base.internet.socket.Socket;
-import org.limewire.hello.base.move.Move;
-import org.limewire.hello.base.move.PacketMove;
-import org.limewire.hello.base.move.StripeMove;
-import org.limewire.hello.base.pattern.Range;
-import org.limewire.hello.base.pattern.Size;
-import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.size.Move;
+import org.limewire.hello.base.size.PacketMove;
+import org.limewire.hello.base.size.Range;
+import org.limewire.hello.base.size.Size;
+import org.limewire.hello.base.size.Stripe;
+import org.limewire.hello.base.size.StripePattern;
 import org.limewire.hello.base.time.Now;
 
 public class Bin {
@@ -205,7 +205,7 @@ public class Bin {
 	
 	// Stream
 
-	/** Move 1 byte or more from stream in to this Bin, or throw an IOException. */
+	/** Move 1 byte or more from stream in to this Bin. */
 	public Move in(InputStream stream, Range range) throws IOException {
 		int ask = range.ask(space()); // Don't try to bring in more bytes than buffer has space to hold
 		Now start = new Now();
@@ -218,7 +218,7 @@ public class Bin {
 		return new Move(start, did);
 	}
 
-	/** Move 1 byte or more from this Bin out to stream, or throw an IOException. */
+	/** Move 1 byte or more from this Bin out to stream. */
 	public Move out(OutputStream stream, Range range) throws IOException {
 		int ask = range.ask(size()); // Don't try to give out more data than buffer has
 		Now start = new Now();
@@ -232,31 +232,31 @@ public class Bin {
 
 	// File
 	
-	/** Add 1 byte or more from the start of stripe in file to this Bin, or throw an IOException. */
-	public StripeMove read(File file, Stripe stripe) throws IOException {
-		stripe = stripe.begin(space()); // Don't try to read more bytes than we have space for
-		ByteBuffer space = in((int)stripe.size);
+	/** Read 1 byte or more from file to this Bin. */
+	public Move read(File file, StripePattern pattern, Range range) throws IOException {
+		int ask = range.ask(space()); // Don't try to read more bytes than we have space for
+		ByteBuffer space = in(ask);
+		if (!pattern.is(true, new Stripe(range.i, ask))) throw new IOException("hole"); // Make sure the file has data where we will read it
 		Now start = new Now();
-		int did = file.file.getChannel().read(space, stripe.i); // Read from the file at i and move space.position forward
+		int did = file.file.getChannel().read(space, range.i); // Read from the file at i and move space.position forward
 		inCheck(did, space);
 		inDone(space);
-		return new StripeMove(start, stripe.i, did);
+		return new Move(start, range.i, did);
 	}
 	
-	/** Move 1 byte or more from this Bin to file, or throw an IOException. */
-	public StripeMove write(File file, Range range) throws IOException {
-		int ask = range.ask(size()); // Don't try to write more bytes than we have
-		ByteBuffer data = out(ask);
+	/** Write 1 byte or more from this Bin to file. */
+	public Move write(File file, Range range) throws IOException {
+		ByteBuffer data = out(range.ask(size())); // Don't try to write more bytes than we have
 		Now start = new Now();
 		int did = file.file.getChannel().write(data, range.i); // Write to the file at trip.at and move data.position forward
 		outCheck(did, data);
 		outDone(data);
-		return new StripeMove(start, range.i, did);
+		return new Move(start, range.i, did);
 	}
 
 	// Socket
 	
-	/** Download 1 byte or more from socket, adding it to this Bin, or throw an IOException. */
+	/** Download 1 byte or more from socket, adding it to this Bin. */
 	public Move download(Socket socket, Range range) throws IOException {
 		ByteBuffer space = in(range.ask(space()));
 		Now start = new Now();
@@ -266,7 +266,7 @@ public class Bin {
 		return new Move(start, did);
 	}
 
-	/** Upload 1 byte or more from this Bin into socket, or throw an IOException. */
+	/** Upload 1 byte or more from this Bin into socket. */
 	public Move upload(Socket socket, Range range) throws IOException {
 		ByteBuffer data = out(range.ask(size()));
 		Now start = new Now();
@@ -301,19 +301,21 @@ public class Bin {
 
 	// Direct
 
-	/** Download 1 byte or more directly from socket to file, or throw an IOException. */
-	public static StripeMove down(Socket socket, File file, Stripe stripe) throws IOException {
+	/** Download 1 byte or more directly from socket to file. */
+	public static Move down(Socket socket, File file, Range range) throws IOException {
+		int ask = range.ask((int)Size.gigabyte);
 		Now start = new Now();
-		long did = file.file.getChannel().transferFrom(socket.channel, stripe.i, stripe.size); // Download up to size bytes to the file at i
-		if (did < 1 || did > stripe.size) throw new IOException("did " + did); // Wrote nothing or too much
-		return new StripeMove(start, stripe.i, did);
+		long did = file.file.getChannel().transferFrom(socket.channel, range.i, ask); // Download up to size bytes to the file at i
+		if (did < 1 || did > ask) throw new IOException("did " + did); // Wrote nothing or too much
+		return new Move(start, range.i, did);
 	}
 
-	/** Upload 1 byte or more from the start of stripe in file directly to socket, or throw an IOException. */
-	public static StripeMove up(Socket socket, File file, Stripe stripe) throws IOException {
+	/** Upload 1 byte or more from the file directly to socket. */
+	public static Move up(Socket socket, File file, Range range) throws IOException {
+		int ask = range.ask((int)Size.gigabyte);
 		Now start = new Now();
-		long did = file.file.getChannel().transferTo(stripe.i, stripe.size, socket.channel); // Upload up to size bytes from the file at i
-		if (did < 1 || did > stripe.size) throw new IOException("did " + did); // Wrote nothing or too much
-		return new StripeMove(start, stripe.i, did);
+		long did = file.file.getChannel().transferTo(range.i, ask, socket.channel); // Upload up to size bytes from the file at i
+		if (did < 1 || did > ask) throw new IOException("did " + did); // Wrote nothing or too much
+		return new Move(start, range.i, did);
 	}
 }

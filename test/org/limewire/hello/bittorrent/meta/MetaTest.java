@@ -7,7 +7,7 @@ import org.limewire.hello.all.Main;
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.Path;
-import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.size.Stripe;
 
 public class MetaTest {
 

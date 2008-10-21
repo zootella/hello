@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.pattern.Stripe;
-import org.limewire.hello.base.pattern.StripePattern;
+import org.limewire.hello.base.size.Stripe;
+import org.limewire.hello.base.size.StripePattern;
 
 // an open file on the disk with access to its data
 public class OldFile {

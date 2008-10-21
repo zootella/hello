@@ -1,4 +1,4 @@
-package org.limewire.hello.base.download;
+package org.limewire.hello.base.download.resume;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -23,7 +23,7 @@ import org.limewire.hello.base.user.SelectTextArea;
 import org.limewire.hello.base.user.TextMenu;
 
 /** A Download dialog on the screen that views a DownloadMachine below. */
-public class DownloadDialog extends Close {
+public class GetDialogAdvanced extends Close {
 	
 	// Program
 
@@ -31,7 +31,7 @@ public class DownloadDialog extends Close {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-            	DownloadDialog dialog = new DownloadDialog();
+            	GetDialogAdvanced dialog = new GetDialogAdvanced();
         		dialog.dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Make closing the window close the program
             }
         });
@@ -40,7 +40,7 @@ public class DownloadDialog extends Close {
     // Dialog
 
     /** Show the Download dialog on the screen to let the user download a file. */
-	public DownloadDialog() {
+	public GetDialogAdvanced() {
 
 		// Make dialog contents
 		address = new JTextField(); // Path box
@@ -97,7 +97,7 @@ public class DownloadDialog extends Close {
 		panel.place(1, 8, 1, 1, 1, 1, 0, 0, Cell.wrap(bar4.jpanel));
 
 		// Make our DownloadMachine that will do what this dialog shows
-		download = new DownloadMachine();
+		download = new GetMachineAdvanced(null);
 
 		// Make our inner View object and connect the Model below to it
 		view = new MyView();
@@ -112,7 +112,7 @@ public class DownloadDialog extends Close {
 	}
 	
 	/** The object below with a Model this dialog is a View of. */
-	private final DownloadMachine download;
+	private final GetMachineAdvanced download;
 
 	private final JDialog dialog;
 	private final JTextField address;
@@ -144,7 +144,7 @@ public class DownloadDialog extends Close {
 	// The user clicked a button
 	private class EnterAction extends AbstractAction {
 		public EnterAction() { super("Enter"); }
-		public void actionPerformed(ActionEvent a) { download.enter(address.getText()); }
+		public void actionPerformed(ActionEvent a) { /*download.enter(address.getText());*/ }
 	}
 	private class GetAction extends AbstractAction {
 		public GetAction() { super("Get"); }
@@ -168,7 +168,7 @@ public class DownloadDialog extends Close {
 	}
 	private class ResetAction extends AbstractAction {
 		public ResetAction() { super("Reset"); }
-		public void actionPerformed(ActionEvent a) { download.reset(); }
+		public void actionPerformed(ActionEvent a) { /*download.reset();*/ }
 	}
 	private class DeleteAction extends AbstractAction {
 		public DeleteAction() { super("Delete"); }
@@ -176,7 +176,7 @@ public class DownloadDialog extends Close {
 	}
 	private class RemoveAction extends AbstractAction {
 		public RemoveAction() { super("Remove"); }
-		public void actionPerformed(ActionEvent a) { download.remove(); }
+		public void actionPerformed(ActionEvent a) { /*download.remove();*/ }
 	}
 
 	// View
@@ -193,15 +193,19 @@ public class DownloadDialog extends Close {
 			Refresh.text(type, download.model.type());
 			Refresh.text(savedTo, download.model.savedTo());
 			
+			/*
 			Refresh.edit(address, download.model.canEnter());
 			Refresh.can(enter, download.model.canEnter());
+			*/
 			
 			Refresh.can(get, download.model.canGet());
 			Refresh.can(pause, download.model.canPause());
 			Refresh.can(open, download.model.canOpen());
 			Refresh.can(openSavedFile, download.model.canOpenSavedFile());
 			Refresh.can(openContainingFolder, download.model.canOpenContainingFolder());
+			/*
 			Refresh.can(reset, download.model.canReset());
+			*/
 			Refresh.can(delete, download.model.canDelete());
 		}
 
@@ -210,5 +214,5 @@ public class DownloadDialog extends Close {
 	}
 	
 	/** Give inner classes a link to this outer object. */
-	private DownloadDialog me() { return this; }
+	private GetDialogAdvanced me() { return this; }
 }

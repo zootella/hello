@@ -1,8 +1,8 @@
 package org.limewire.hello.base.file;
 
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.move.StripeMove;
-import org.limewire.hello.base.pattern.Trip;
+import org.limewire.hello.base.size.Meter;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.valve.Valve;
@@ -11,11 +11,11 @@ public class WriteValve extends Close implements Valve {
 	
 	// Make
 	
-	/** Make a WriteValve that will take data from in() and write it at index in file, limit size or -1 no limit. */
-	public WriteValve(Update update, File file, Trip trip) {
+	/** Make a WriteValve that will take data from in() and write it at index in file. */
+	public WriteValve(Update update, File file, Range range) {
 		this.update = update;
 		this.file = file;
-		this.trip = trip;
+		meter = new Meter(range);
 		in = Bin.medium();
 	}
 	
@@ -25,10 +25,6 @@ public class WriteValve extends Close implements Valve {
 	private final File file;
 	/** Our current WriteLater, null if we don't have one right now. */
 	private WriteLater later;
-	
-	/** Where we start writing in the file, how much we've done, and the size limit. */
-	public Trip trip() { return trip; }
-	private Trip trip;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
@@ -49,26 +45,28 @@ public class WriteValve extends Close implements Valve {
 	
 	public Bin out() { return null; }
 	
+	public Meter meter() { return meter; }
+	private final Meter meter;
+	
 	public void start() {
 		if (closed()) return;
-		if (later == null && in.hasData() && !trip.isDone())
-			later = new WriteLater(update, file, trip, in);
+		if (!meter.isDone() && later == null && in.hasData())
+			later = new WriteLater(update, file, meter.remain(), in);
 	}
 	
 	public void stop() throws Exception {
 		if (closed()) return;
 		if (later != null && later.closed()) { // Our later finished
-			StripeMove move = later.result(); // If an exception closed later, throw it
+			meter.add(later.result().stripe.size); // If an exception closed later, throw it
 			later = null; // Discard the closed later, now in() and out() will work
-			trip = trip.add(move.stripe.size);
 		}
-		if (trip.isDone()) close(); // All done
+		if (meter.isDone()) close(); // All done
 	}
 	
 	public boolean isEmpty() {
 		return
 			later == null && // No later using our bins
-			in.isEmpty()  && // No data from a Valve above waiting for us to write
-			trip.isEmpty();  // No size limit, or a size limit we've filled
+			in.isEmpty()  && // No data
+			meter.isEmpty(); // No responsibility to do more
 	}
 }

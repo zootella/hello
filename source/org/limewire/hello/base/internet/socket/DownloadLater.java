@@ -2,8 +2,8 @@ package org.limewire.hello.base.internet.socket;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.move.Move;
-import org.limewire.hello.base.pattern.Range;
+import org.limewire.hello.base.size.Move;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 

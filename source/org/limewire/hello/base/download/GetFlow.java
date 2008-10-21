@@ -4,26 +4,27 @@ import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.Open;
 import org.limewire.hello.base.file.OpenLater;
 import org.limewire.hello.base.file.WriteValve;
-import org.limewire.hello.base.pattern.Range;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
-import org.limewire.hello.base.valve.ValveList;
+import org.limewire.hello.base.time.Progress;
+import org.limewire.hello.base.valve.Flow;
 import org.limewire.hello.base.web.Url;
 
-/** Download and save a file from a HTTP GET request and see the progress. */
-public class DownloadTask extends Close {
+/** Download data from a url and write it to a file. */
+public class GetFlow extends Close {
 	
 	// Make
 	
-	/** Download url to path. */
-	public DownloadTask(Update up, Url url, Range range, Open open) {
+	/** Download range in url to open.path. */
+	public GetFlow(Update up, Url url, Range range, Open open) {
 		this.up = up;
 		update = new Update(new MyReceive());
 		this.url = url;
 		this.range = range;
 		this.open = open;
-		this.done = new Range(range.i, 0);
+		progress = new Progress("get", "Getting", "Downloaded");
 		update.send(); // Move things forward
 	}
 
@@ -34,19 +35,22 @@ public class DownloadTask extends Close {
 
 	// Open url into get with openGet
 	private final Url url;
-	public final Range range;
 	private OpenGetLater openGet;
+	public Get get() { return get; }
 	private Get get;
 
 	// Open path into file with openFile
 	private final Open open;
 	private OpenLater openFile;
 	private File file;
+
+	/** The Range we download and write. */
+	private Range range;
 	
-	/** Our list of Valve objects that download a get and write it to file, null before we make it. */
-	private ValveList list;
+	/** Our list of Valve objects that download get and write it to file, null before we make it. */
+	private Flow list;
 	/** The first Valve in list, downloads data from get. */
-	private DownloadGetValve getValve;
+	private GetValve getValve;
 	/** The last Valve in list, writes data to file. */
 	private WriteValve writeValve;
 
@@ -59,18 +63,21 @@ public class DownloadTask extends Close {
 		Close.close(list);
 		Close.close(getValve);
 		Close.close(writeValve);
+		progress.pause();
 		up.send();
 	}
 	
 	// Look
-
-	/** If an Exception made us give up, throw it. */
-	public void exception() throws Exception { if (exception != null) throw exception; }
-	private Exception exception;
 	
-	/** How much we've downloaded and how much more we plan to get. */
-	public Range done() { return done; }
-	private Range done;
+	/** Our progress writing downloaded data to file. */
+	public final Progress progress;
+
+	/** Once we're closed, call result() for the Exception that made us give up. */
+	public void result() throws Exception {
+		if (!closed()) throw new IllegalStateException(); // Don't call this until closed
+		if (exception != null) throw exception;           // An exception made us give up
+	}
+	private Exception exception;
 
 	// Receive
 
@@ -84,7 +91,8 @@ public class DownloadTask extends Close {
 					openGet = new OpenGetLater(update, url, range);
 				if (get == null && openGet != null && openGet.closed()) { // Get our open Get
 					get = openGet.result();
-					range = get.range();
+					range = range.know(get.size());
+					progress.size(range.size);
 					up.send();
 				}
 
@@ -98,8 +106,8 @@ public class DownloadTask extends Close {
 
 				// List
 				if (list == null && get != null && file != null) {
-					list = new ValveList(update, false, false);
-					getValve = new DownloadGetValve(update, get);
+					list = new Flow(update, false, false);
+					getValve = new GetValve(update, get, range);
 					writeValve = new WriteValve(update, file, range);
 					list.list.add(getValve);
 					list.list.add(writeValve);
@@ -109,7 +117,7 @@ public class DownloadTask extends Close {
 				// Move data down the list and get progress
 				if (list != null) {
 					list.move();
-					range = writeValve.range();
+					progress.done(writeValve.meter().done()); // Tell progress writeValve's done distance
 					up.send();
 				}
 

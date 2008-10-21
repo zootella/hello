@@ -5,8 +5,8 @@ import java.io.RandomAccessFile;
 
 import org.limewire.hello.base.data.Bay;
 import org.limewire.hello.base.data.Data;
-import org.limewire.hello.base.pattern.Stripe;
-import org.limewire.hello.base.pattern.StripePattern;
+import org.limewire.hello.base.size.Stripe;
+import org.limewire.hello.base.size.StripePattern;
 import org.limewire.hello.base.state.Close;
 
 /** An open file on the disk with access to its data. */
@@ -46,9 +46,6 @@ public class File extends Close {
 	public final Path path;
 	/** The Java RandomAccessFile object that gives us access to the data in our file. */
 	public final RandomAccessFile file;
-	/** A StripePattern that shows what parts of this File have data, and which parts are gaps. */
-	public StripePattern pattern() { return pattern; }
-	private StripePattern pattern;
 
 	// Close
 
@@ -72,11 +69,14 @@ public class File extends Close {
 	public boolean isEmpty() { return size() == 0; }
 	/** True if this File has 1 or more bytes of data inside. */
 	public boolean hasData() { return size() > 0; }
-
-	/** The size of this file as a Stripe 0 through size(), as though any gaps in it are full, null if empty file. */
-	public Stripe stripe() {
-		if (size() == 0) return null;
-		return new Stripe(0, size());
+	
+	/** A StripePattern that shows what parts of this File have data, and which parts are gaps. */
+	public StripePattern pattern() { return pattern; }
+	private StripePattern pattern;
+	
+	/** Tell this File that you wrote stripe of data to it. */
+	public void add(Stripe stripe) {
+		pattern = pattern.add(stripe);
 	}
 
 	// Transfer
@@ -103,7 +103,7 @@ public class File extends Close {
 		if (data.isEmpty()) return; // Nothing to write
 		int did = file.getChannel().write(data.toByteBuffer(), i);
 		if (did != data.size()) throw new IOException("did " + did); // Make sure write() wrote everything
-		pattern = pattern.add(new Stripe(i, data.size())); // Update pattern
+		add(new Stripe(i, data.size())); // Update pattern
 	}
 
 	// Small

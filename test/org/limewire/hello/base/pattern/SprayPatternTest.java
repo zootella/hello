@@ -8,7 +8,7 @@ import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.encode.Encode;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.MessageException;
-import org.limewire.hello.base.pattern.SprayPattern;
+import org.limewire.hello.base.size.SprayPattern;
 
 public class SprayPatternTest {
 	

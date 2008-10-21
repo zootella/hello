@@ -1,4 +1,4 @@
-package org.limewire.hello.base.pattern;
+package org.limewire.hello.base.size;
 
 
 import java.util.ArrayList;
@@ -188,6 +188,11 @@ public class StripePattern {
 	public boolean is(boolean value, Stripe clip) {
 		if (value) return and(clip.pattern()).equals(clip.pattern()); // true if this and stripe is stripe
 		else return and(clip.pattern().not()).equals(new StripePattern()); // true if this and !stripe is blank
+	}
+
+	/** true if this StripePattern is a single Stripe at the start size big. */
+	public boolean isComplete(long size) {
+		return size() == size && is(true, new Stripe(0, size));
 	}
 
 	// -------- And, or, and not operations --------

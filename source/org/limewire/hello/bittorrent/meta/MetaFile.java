@@ -1,7 +1,7 @@
 package org.limewire.hello.bittorrent.meta;
 
 import org.limewire.hello.base.file.PathName;
-import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.size.Stripe;
 
 
 /** Information about one file listed in a .torrent file. */

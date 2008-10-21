@@ -8,7 +8,7 @@ import java.nio.channels.SocketChannel;
 
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.internet.name.IpPort;
-import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.size.Stripe;
 
 // A Bay object holds data, growing to hold more you add to it.
 // say one place in the program, probably in the javadoc or wiki page for bay

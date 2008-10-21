@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.Test;
 import org.limewire.hello.all.Main;
 import org.limewire.hello.base.exception.MessageException;
-import org.limewire.hello.base.pattern.Stripe;
-import org.limewire.hello.base.pattern.StripePattern;
+import org.limewire.hello.base.size.Stripe;
+import org.limewire.hello.base.size.StripePattern;
 
 public class StripePatternTest {
 	

@@ -1,6 +1,8 @@
 package org.limewire.hello.base.encode;
 
 import org.limewire.hello.base.data.Bin;
+import org.limewire.hello.base.size.Meter;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.valve.Valve;
@@ -10,9 +12,10 @@ public class HashValve extends Close implements Valve {
 	// Make
 
 	/** Make a HashValve that will take data from in() and hash it. */
-	public HashValve(Update update) {
+	public HashValve(Update update, Range range) {
 		this.update = update;
 		this.hash = new Hash();
+		meter = new Meter(range);
 		in = Bin.medium();
 	}
 	
@@ -31,13 +34,7 @@ public class HashValve extends Close implements Valve {
 			later = null; // Discard the closed later so in() and out() work
 		}
 	}
-	
-	// Look
-	
-	/** How many bytes this HashValve has finished hashing, 0 or more. */
-	public long distance() { return distance; }
-	private long distance;
-	
+
 	// Valve
 	
 	public Bin in() {
@@ -48,23 +45,28 @@ public class HashValve extends Close implements Valve {
 	
 	public Bin out() { return null; }
 	
+	public Meter meter() { return meter; }
+	private final Meter meter;
+	
 	public void start() {
 		if (closed()) return;
-		if (later == null && in.hasData())
-			later = new HashLater(update, hash, in);
+		if (!meter.isDone() && later == null && in.hasData())
+			later = new HashLater(update, hash, in, meter.remain());
 	}
 
 	public void stop() throws Exception {
 		if (closed()) return;
 		if (later != null && later.closed()) { // Our later finished
-			distance += later.result().size; // If an exception closed later, throw it
+			meter.add(later.result().stripe.size); // If an exception closed later, result() will throw it
 			later = null; // Discard the closed later, now in() and out() will work
 		}
+		if (meter.isDone()) close(); // All done
 	}
 	
 	public boolean isEmpty() {
 		return
 			later == null && // No later using our bins
-			in.isEmpty();    // No data
+			in.isEmpty()  && // No data
+			meter.isEmpty(); // No responsibility to do more
 	}
 }

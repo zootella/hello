@@ -1,73 +1,76 @@
-package org.limewire.hello.base.encode;
+package org.limewire.hello.base.download;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.exception.MessageException;
+import org.limewire.hello.base.file.Open;
+import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Model;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.time.Progress;
+import org.limewire.hello.base.web.Url;
 
-/** Hash files with stop and progress. */
-public class HashMachine extends Close {
+/** Download a file with stop and progress. */
+public class GetMachine extends Close {
 	
 	// Make
 
-	/** Make a HashMachine that can hash files with stop and progress. */
-	public HashMachine() {
+	/** Make a GetMachine that can download a file with stop and progress. */
+	public GetMachine() {
 		update = new Update(new MyReceive());
 		model = new MyModel();
 		reset(); // Start out blank
 	}
 	
-	/** Close a file we have open. */
+	/** Close the file and socket we have open. */
 	public void close() {
 		if (already()) return;
 		reset();
 		model.close();
 	}
-	
-	/** The Path to the file we're hashing, null if none right now. */
-	private String path;
-	/** The HashTask we're using to hash a file, null if we don't have one right now. */
-	private HashFlow hash;
-	/** The Progress that tells how our hashing is going, null if we don't have one right now. */
+
+	/** The Url we download, null if none right now. */
+	private Url url;
+	/** The Path to the file we write, null if none right now. */
+	private Path path;
+	/** The GetFlow we're using to download a file, null if we don't have one right now. */
+	private GetFlow get;
+	/** The Progress that tells how our downloading is going, null if we don't have one right now. */
 	private Progress progress;
 	/** The Exception that made us give up, null if there isn't one right now. */
 	private Exception exception;
-	/** The hash value we computed, null if we don't have one right now. */
-	private Data value;
 
 	// Command
 
-	/** Open and hash the file at the given path text from the user. */ 
-	public void start(String user) {
+	/** Download the given url to the given path. */ 
+	public void start(String userUrl, String userPath) {
 		if (!model.canStart()) return;
 		try {
 
 			// Reset everything and start from the given user text
 			reset();
-			path = user;
-			hash = new HashFlow(update, path, new Range());
-			progress = hash.progress; // Point progress at hash's progress, we may keep it longer than we do hash
+			url = new Url(userUrl);
+			path = new Path(userPath);
+			get = new GetFlow(update, this.url, new Range(), new Open(this.path, null, Open.overwrite));
+			
+			progress = get.progress; // Point progress at get's progress, we may keep it longer than we do get
 			
 		} catch (Exception e) { exception = e; }
 		model.changed();
 	}
 	
-	/** Stop the hashing we're doing right now, but keep the progress on the screen. */
+	/** Stop the downloading we're doing right now, but keep the progress on the screen. */
 	public void stop() {
 		if (!model.canStop()) return;
 		try {
 			
-			// Close and discard our hash
-			Close.close(hash);
-			hash = null;
+			// Close and discard our get
+			Close.close(get);
+			get = null;
 			
 		} catch (Exception e) { exception = e; }
 		model.changed();
@@ -79,12 +82,12 @@ public class HashMachine extends Close {
 		try {
 
 			// Reset everything
+			url = null;
 			path = null;
-			Close.close(hash);
-			hash = null;
+			Close.close(get);
+			get = null;
 			progress = null;
 			exception = null;
-			value = null;
 			
 		} catch (Exception e) { exception = e; }
 		model.changed();
@@ -99,15 +102,14 @@ public class HashMachine extends Close {
 			if (closed()) return;
 			try {
 
-				// We have a hash doing something
-				if (hash != null) {
+				// We have a get doing something
+				if (get != null) {
 					model.changed();
 				}
 
-				// Our hash closed
-				if (hash != null && hash.closed()) {
-					value = hash.result(); // Get its result and discard it
-					hash = null;
+				// Our get closed
+				if (get != null && get.closed()) {
+					get = null;
 					model.changed();
 				}
 
@@ -123,12 +125,12 @@ public class HashMachine extends Close {
 
 		/** true if we can start trying to hash a new file. */
 		public boolean canStart() {
-			return path == null && hash == null && progress == null && exception == null && value == null;
+			return url == null && path == null && get == null && progress == null && exception == null;
 		}
 
 		/** true if we can stop the hashing we're doing. */
 		public boolean canStop() {
-			return hash != null && !hash.closed();
+			return get != null && !get.closed();
 		}
 		
 		/** true, we can always reset. */
@@ -147,8 +149,8 @@ public class HashMachine extends Close {
 				}
 				return "Cannot";
 			}
-			if (value != null)
-				return "Done";
+			if (false)
+				return "Done"; //TODO how do you signal done
 			if (progress != null)
 				return progress.describeStatus();
 			return "";
@@ -161,26 +163,13 @@ public class HashMachine extends Close {
 			return "";
 		}
 
-		/** Hash value. */
-		public String value() {
-			if (value != null)
-				return value.base16();
-			return "";
-		}
-
 		/** Compose text about our current state to show the user. */
-		public Map<String, String> view() {
-			Map<String, String> map = new LinkedHashMap<String, String>();
-			map.put("Status", status());
-			map.put("Size", size());
-			map.put("Value", value());
-			return map;
-		}
+		public Map<String, String> view() { return null; }
 
 		/** The outer object that made and contains this Model. */
 		public Object out() { return me(); }
 	}
 	
 	/** Give inner classes a link to this outer object. */
-	private HashMachine me() { return this; }
+	private GetMachine me() { return this; }
 }

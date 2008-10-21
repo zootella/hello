@@ -2,8 +2,8 @@ package org.limewire.hello.base.time;
 
 import org.junit.Test;
 import org.junit.Assert;
+import org.limewire.hello.base.size.Size;
 import org.limewire.hello.base.time.Progress;
-import org.limewire.hello.base.pattern.Size;
 
 public class ProgressTest {
 	

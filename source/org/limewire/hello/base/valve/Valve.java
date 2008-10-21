@@ -1,6 +1,7 @@
 package org.limewire.hello.base.valve;
 
 import org.limewire.hello.base.data.Bin;
+import org.limewire.hello.base.size.Meter;
 
 /** Ways to control a Valve. */
 public interface Valve {
@@ -11,6 +12,8 @@ public interface Valve {
 	public Bin in();
 	/** Access this Valve's output Bin to get the data it processed, null if in use or doesn't have one. */
 	public Bin out();
+	/** How much data this Valve has processed. */
+	public Meter meter();
 
 	/** Tell this Valve to start if possible. */
 	public void start();

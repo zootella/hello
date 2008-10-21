@@ -5,7 +5,7 @@ import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Number;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.MessageException;
-import org.limewire.hello.base.pattern.Stripe;
+import org.limewire.hello.base.size.Stripe;
 
 
 /** A stripe of data in a single numbered piece of a torrent. */

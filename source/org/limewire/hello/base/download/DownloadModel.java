@@ -2,7 +2,7 @@ package org.limewire.hello.base.download;
 
 import java.util.Map;
 
-import org.limewire.hello.base.download.DownloadMachine.MyModel;
+import org.limewire.hello.base.download.resume.GetMachineAdvanced.MyModel;
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Model;

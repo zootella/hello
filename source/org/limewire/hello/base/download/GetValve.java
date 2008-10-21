@@ -1,20 +1,21 @@
 package org.limewire.hello.base.download;
 
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.move.Move;
-import org.limewire.hello.base.pattern.Size;
+import org.limewire.hello.base.size.Meter;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.valve.Valve;
 
-public class DownloadGetValve extends Close implements Valve {
+public class GetValve extends Close implements Valve {
 	
 	// Make
 
-	/** Make a GetValve that will download size from get and put data in out(). */
-	public DownloadGetValve(Update update, Get get) {
+	/** Make a GetValve that will download get and put data in out(). */
+	public GetValve(Update update, Get get, Range range) {
 		this.update = update;
 		this.get = get;
+		meter = new Meter(range);
 		out = Bin.medium();
 	}
 	
@@ -23,7 +24,7 @@ public class DownloadGetValve extends Close implements Valve {
 	/** The Get we download from. */
 	private final Get get;
 	/** Our current DownloadLater, null if we don't have one right now. */
-	private DownloadGetLater later;
+	private GetLater later;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
@@ -44,23 +45,28 @@ public class DownloadGetValve extends Close implements Valve {
 	}
 	private Bin out;
 	
+	public Meter meter() { return meter; }
+	private final Meter meter;
+	
 	public void start() {
 		if (closed()) return;
-		if (later == null && out.hasSpace())
-			later = new DownloadGetLater(update, get, null, out);
+		if (!meter.isDone() && later == null && out.hasSpace())
+			later = new GetLater(update, get, meter.remain(), out);
 	}
 	
 	public void stop() throws Exception {
 		if (closed()) return;
 		if (later != null && later.closed()) { // Our later finished
-			Move move = later.result(); // If an exception closed later, throw it
+			meter.add(later.result().stripe.size); // If an exception closed later, throw it
 			later = null; // Discard the closed later, now in() and out() will work
 		}
+		if (meter.isDone()) close(); // All done
 	}
 	
 	public boolean isEmpty() {
 		return
 			later == null && // No later using our bins
-			out.isEmpty();   // No data we downloaded waiting for the next Valve to take
+			out.isEmpty() && // No data
+			meter.isEmpty(); // No responsibility to do more
 	}
 }

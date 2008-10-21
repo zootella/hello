@@ -1,4 +1,4 @@
-package org.limewire.hello.base.pattern;
+package org.limewire.hello.base.size;
 
 
 import java.util.BitSet;

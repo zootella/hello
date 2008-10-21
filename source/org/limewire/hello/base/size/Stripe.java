@@ -1,6 +1,7 @@
-package org.limewire.hello.base.pattern;
+package org.limewire.hello.base.size;
 
 import java.util.List;
+
 
 // a Stripe always has width, you can't make a stripe with size 0
 // a Stripe object is immutable, once you have one, you don't have to worry about it changing on you
@@ -58,7 +59,7 @@ public class Stripe {
 	/** Make the Stripe that is this one after the given one, null if nothing left. */
 	public Stripe after(Stripe stripe) {
 		if (stripe.i != i || stripe.size > size) throw new IndexOutOfBoundsException(); // Indices same and size same or smaller
-		if (size == stripe.size) return null; // Nothing after
+		if (size == stripe.size) return null; // Nothing after TODO change this to return a Range, and never null
 		return new Stripe(stripe.i + stripe.size, size - stripe.size);
 	}
 	

@@ -3,6 +3,7 @@ package org.limewire.hello.base.pattern;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.limewire.hello.base.size.Stripe;
 
 public class StripeTest {
 	

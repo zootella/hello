@@ -2,7 +2,8 @@ package org.limewire.hello.base.encode;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.move.Move;
+import org.limewire.hello.base.size.Move;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.time.Now;
@@ -12,12 +13,13 @@ public class HashLater extends Later {
 	// Make
 
 	/** SHA1 hash and clear the contents of bin with the given Hash object, don't look at hash or bin until this is closed. */
-	public HashLater(Update above, Hash hash, Bin bin) {
+	public HashLater(Update above, Hash hash, Bin bin, Range range) {
 		this.above = above; // We'll tell above when we're done
 		
 		// Save the input
 		this.hash = hash;
 		this.bin = bin;
+		this.range = range;
 
 		work = new MySwingWorker();
 		work.execute(); // Have a worker thread call doInBackground() now
@@ -27,6 +29,8 @@ public class HashLater extends Later {
 	private final Hash hash;
 	/** The Bin we put the data in. */
 	private final Bin bin;
+	/** The limit of how much data we'll hash. */
+	private final Range range;
 
 	// Result
 	
@@ -46,10 +50,10 @@ public class HashLater extends Later {
 			try {
 				
 				Now start = new Now();
-				int size = bin.size();
-				hash.add(bin.data());
-				bin.clear();
-				workMove = new Move(start, size);
+				int ask = range.ask(bin.size());
+				hash.add(bin.data().begin(ask));
+				bin.remove(ask);
+				workMove = new Move(start, ask);
 
 			} catch (Exception e) { workException = e; } // Catch the exception our code threw
 			return null;

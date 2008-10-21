@@ -5,7 +5,7 @@ import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.data.Number;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.MessageException;
-import org.limewire.hello.base.pattern.SprayPattern;
+import org.limewire.hello.base.size.SprayPattern;
 import org.limewire.hello.bittorrent.meta.Meta;
 
 

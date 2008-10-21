@@ -1,7 +1,8 @@
 package org.limewire.hello.base.internet.socket;
 
 import org.limewire.hello.base.data.Bin;
-import org.limewire.hello.base.pattern.Range;
+import org.limewire.hello.base.size.Meter;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.valve.Valve;
@@ -14,7 +15,7 @@ public class DownloadValve extends Close implements Valve {
 	public DownloadValve(Update update, Socket socket, Range range) {
 		this.update = update;
 		this.socket = socket;
-		this.range = range;
+		meter = new Meter(range);
 		out = Bin.medium();
 	}
 	
@@ -22,8 +23,6 @@ public class DownloadValve extends Close implements Valve {
 	private final Update update;
 	/** The socket we download from. */
 	private final Socket socket;
-	/** Limit how much we download. */
-	private final Range range;
 	/** Our current DownloadLater that downloads data from socket to out, null if we don't have one right now. */
 	private DownloadLater later;
 
@@ -46,23 +45,28 @@ public class DownloadValve extends Close implements Valve {
 	}
 	private Bin out;
 	
+	public Meter meter() { return meter; }
+	private final Meter meter;
+	
 	public void start() {
 		if (closed()) return;
-		if (later == null && out.hasSpace())
-			later = new DownloadLater(update, socket, range, out);
+		if (!meter.isDone() && later == null && out.hasSpace())
+			later = new DownloadLater(update, socket, meter.remain(), out);
 	}
 	
 	public void stop() throws Exception {
 		if (closed()) return;
 		if (later != null && later.closed()) { // Our later finished
-			later.result(); // If an exception closed later, throw it
+			meter.add(later.result().stripe.size); // If an exception closed later, throw it
 			later = null; // Discard the closed later, now in() and out() will work
 		}
+		if (meter.isDone()) close(); // All done
 	}
 	
 	public boolean isEmpty() {
 		return
 			later == null && // No later using our bins
-			out.isEmpty();   // No data
+			out.isEmpty() && // No data
+			meter.isEmpty(); // No responsibility to do more
 	}
 }

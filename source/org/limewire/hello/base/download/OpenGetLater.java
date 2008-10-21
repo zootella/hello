@@ -1,7 +1,7 @@
 package org.limewire.hello.base.download;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.limewire.hello.base.pattern.Range;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Later;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.web.Url;

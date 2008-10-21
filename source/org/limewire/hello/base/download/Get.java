@@ -8,7 +8,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.limewire.hello.base.pattern.Range;
+import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.web.Url;
 
@@ -23,7 +23,6 @@ public class Get extends Close {
 		// Save the given Url and Range
 		this.url = url;
 		this.range = range;
-		
 		//TODO put the range in the request
 
 		// Create and send a HTTP GET request, and get the response
@@ -36,10 +35,12 @@ public class Get extends Close {
 		else
 			stream = null;
 	}
+	
+	// Look
 
 	/** The given Url we get. */
 	public final Url url;
-	/** The given Range we get. */
+	/** The Range we requested. */
 	public final Range range;
 
 	/** The client object we use to send the request. */
@@ -52,6 +53,8 @@ public class Get extends Close {
 	public final HttpEntity entity;
 	/** A stream to read the response entity, null if response doesn't have one. */
 	public final InputStream stream;
+	
+	// Close
 
 	/** Stop all network communication. */
 	public void close() {
@@ -60,14 +63,23 @@ public class Get extends Close {
 		try { get.abort(); } catch (Exception e) {} // Give up our HTTP GET request
 	}
 	
-	// Look
+	// Parse
 
-	/** The size of the file this Get can download. */
-	public Range range() {
+	/** The content length, 0 or more bytes, -1 unknown. */
+	public long size() {
+
+		//TODO make this better
 		
-		long size = entity.getContentLength();
-		System.out.println("entity.getContentLength() " + size);
-		
-		return new Range(0, size);
+		if (entity == null) {
+			System.out.println("no entity object");
+			return -1;
+		} else {
+			long size = entity.getContentLength();
+			System.out.println("entity.getContentLength() " + size);
+			if (size < 0)
+				return -1;
+			else
+				return size;
+		}
 	}
 }
