@@ -2,7 +2,7 @@ package org.limewire.hello.base.download;
 
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.Open;
-import org.limewire.hello.base.file.OpenLater;
+import org.limewire.hello.base.file.OpenTask;
 import org.limewire.hello.base.file.WriteValve;
 import org.limewire.hello.base.size.Range;
 import org.limewire.hello.base.state.Close;
@@ -35,13 +35,13 @@ public class GetFlow extends Close {
 
 	// Open url into get with openGet
 	private final Url url;
-	private OpenGetLater openGet;
+	private OpenGetTask openGet;
 	public Get get() { return get; }
 	private Get get;
 
 	// Open path into file with openFile
 	private final Open open;
-	private OpenLater openFile;
+	private OpenTask openFile;
 	private File file;
 
 	/** The Range we download and write. */
@@ -88,7 +88,7 @@ public class GetFlow extends Close {
 				
 				// Get
 				if (get == null && openGet == null) // Open our Get
-					openGet = new OpenGetLater(update, url, range);
+					openGet = new OpenGetTask(update, url, range);
 				if (get == null && openGet != null && openGet.closed()) { // Get our open Get
 					get = openGet.result();
 					range = range.know(get.size());
@@ -98,7 +98,7 @@ public class GetFlow extends Close {
 
 				// File
 				if (file == null && openFile == null) // Open our File
-					openFile = new OpenLater(update, open);
+					openFile = new OpenTask(update, open);
 				if (file == null && openFile != null && openFile.closed()) { // Get our open File
 					file = openFile.result();
 					up.send();

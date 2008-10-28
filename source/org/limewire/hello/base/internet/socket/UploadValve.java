@@ -24,7 +24,7 @@ public class UploadValve extends Close implements Valve {
 	/** The socket we upload to. */
 	private final Socket socket;
 	/** Our current UploadLater that uploads data from in to socket, null if we don't have one right now. */
-	private UploadLater later;
+	private UploadTask later;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
@@ -51,7 +51,7 @@ public class UploadValve extends Close implements Valve {
 	public void start() {
 		if (closed()) return;
 		if (!meter.isDone() && later == null && in.hasData())
-			later = new UploadLater(update, socket, meter.remain(), in);
+			later = new UploadTask(update, socket, meter.remain(), in);
 	}
 	
 	public void stop() throws Exception {

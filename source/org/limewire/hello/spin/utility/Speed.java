@@ -1,9 +1,9 @@
-package org.limewire.hello.base.time;
+package org.limewire.hello.spin.utility;
 
 /** Keep track of how fast something is moving. */
 public class Speed {
 
-	// -------- Make a Speed object and add distances --------
+	// Make
 
 	/** Make a new Speed object that can keep track of how fast you're transferring data. */
 	public Speed() {
@@ -41,11 +41,11 @@ public class Speed {
 		}
 
 		// Calculate the average speed in bytes/second
-		if (spots == 0) return 0;                                               // No distance, report no speed
-		else return (int)(((long)bytes * Time.second) / ((long)spots * width)); // Multiply by 1000 because width is in milliseconds
+		if (spots == 0) return 0;                                        // No distance, report no speed
+		else return (int)(((long)bytes * 1000) / ((long)spots * width)); // Multiply by 1000 because width is in milliseconds
 	}
 
-	// -------- Internal parts --------
+	// Inside
 	
 	/**
 	 * An array that tells the total distances we've traveled during time intervals that have happened recently.
@@ -60,7 +60,7 @@ public class Speed {
 	 * During the interval after that, we traveled a total of 2048 bytes.
 	 */
 	private int[] array;
-
+	
 	/** The number of spots in the array. */
 	private static final int length = 50;
 	/** The time, in milliseconds, we will spend in each spot. */
@@ -113,7 +113,7 @@ public class Speed {
 	private void expire() {
 
 		// Set the interval number we're in now
-		now = Time.now() / width;
+		now = System.currentTimeMillis() / width;
 		
 		// Step through the array from one beyond last through now, stopping when we've covered the whole array
 		for (long interval = last + 1; interval <= now && interval <= last + length; interval++) {

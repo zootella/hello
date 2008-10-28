@@ -24,7 +24,7 @@ public class DownloadValve extends Close implements Valve {
 	/** The socket we download from. */
 	private final Socket socket;
 	/** Our current DownloadLater that downloads data from socket to out, null if we don't have one right now. */
-	private DownloadLater later;
+	private DownloadTask later;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
@@ -51,7 +51,7 @@ public class DownloadValve extends Close implements Valve {
 	public void start() {
 		if (closed()) return;
 		if (!meter.isDone() && later == null && out.hasSpace())
-			later = new DownloadLater(update, socket, meter.remain(), out);
+			later = new DownloadTask(update, socket, meter.remain(), out);
 	}
 	
 	public void stop() throws Exception {

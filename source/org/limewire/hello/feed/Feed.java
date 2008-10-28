@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.limewire.hello.base.internet.web.FeedLater;
+import org.limewire.hello.base.internet.web.FeedTask;
 import org.limewire.hello.base.state.Close;
 import org.limewire.hello.base.state.Model;
 import org.limewire.hello.base.state.Receive;
@@ -39,7 +39,7 @@ public class Feed extends Close {
 		update = new Update(new MyReceive()); // Make our inner Update object to find out when objects beneath have changed
 		
 		// Tasks
-		later = new FeedLater(update, url); // Make a FeedUpdate to download and parse the feed
+		later = new FeedTask(update, url); // Make a FeedUpdate to download and parse the feed
 	}
 	
 	/** Close disk and net resources and disconnect from other objects. */
@@ -71,7 +71,7 @@ public class Feed extends Close {
 	public Update update;
 	
 	/** A GetFeed object downloads an RSS feed from the web and parses the XML. */
-	private FeedLater later;
+	private FeedTask later;
 	private SyndFeed feed;
 	private Exception exception;
 	

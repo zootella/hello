@@ -8,7 +8,7 @@ import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.file.PathName;
 import org.limewire.hello.base.file.Save;
 import org.limewire.hello.base.internet.name.Ip;
-import org.limewire.hello.base.internet.web.DomainLater;
+import org.limewire.hello.base.internet.web.DomainTask;
 import org.limewire.hello.base.state.Receive;
 import org.limewire.hello.base.state.Update;
 import org.limewire.hello.base.state.old.OldState;
@@ -60,7 +60,7 @@ public class WebDownload {
 	/** true once the user gives us permission to get started. */
 	private boolean permission;
 	/** The Dns object we are using to find out the Web server's IP address. */
-	private DomainLater dns;
+	private DomainTask dns;
 	/** The Get object we are using to request the file from the Web server. */
 	private OldGet get;
 	
@@ -120,7 +120,7 @@ public class WebDownload {
 			// We have permission to get started
 			if (permission) {
 				if (ip == null) {                                                     // We don't know the Web server's IP address yet
-					if (dns == null) dns = new DomainLater(hereup, url.site);        // If we don't have our Dns object yet, make it
+					if (dns == null) dns = new DomainTask(hereup, url.site);        // If we don't have our Dns object yet, make it
 				} else {                                                              // We know the Web server's IP address
 					if (save == null) save = new Save(folder);                        // If we don't have our temporary file yet, open it
 					if (get == null) get = new OldGet(web.internet, url, ip, save.file); // If we don't have our Get request yet, make it

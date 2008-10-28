@@ -1,6 +1,5 @@
 package org.limewire.hello.base.internet.name;
 
-
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +12,6 @@ import org.limewire.hello.base.data.TextSplit;
 import org.limewire.hello.base.exception.ChopException;
 import org.limewire.hello.base.exception.MessageException;
 
-//TODO make sure this is immutable, you're accessing it in SwingWorker threads
-//TODO use the separate Port class
-
 public class IpPort implements Comparable<IpPort> {
 	
 	// -------- Parts --------
@@ -24,6 +20,7 @@ public class IpPort implements Comparable<IpPort> {
 	public final Ip ip;
 	/** The port number, like 80. */
 	public final int port;
+	//TODO use the separate Port class
 	
 	/** Make a new IpPort object with the given Ip address and port number. */
 	public IpPort(Ip ip, int port) { this.ip = ip; this.port = port; }

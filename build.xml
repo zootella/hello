@@ -39,8 +39,6 @@
 			<!-- Tell the Java compiler where .jar files are that the code above uses -->
 			<classpath>
 
-				<pathelement location="library/swing-worker-1.2.jar"/>  <!-- SwingWorker 1.2, 2008 July 25, https://swingworker.dev.java.net/ -->
-
 				<pathelement location="library/rome-1.0RC1.jar"/>       <!-- Rome 1.0 RC1, https://rome.dev.java.net/ -->
 				<pathelement location="library/jdom.jar"/>              <!-- JDOM 1.1, http://www.jdom.org/ -->
 				<pathelement location="library/itunes-0.4.jar"/>        <!-- Apple iTunes Plug In, 2006 August 20, http://wiki.java.net/bin/view/Javawsxml/ITunes -->
@@ -74,7 +72,7 @@
 				<attribute name="Main-Class" value="org.limewire.hello.all.Main"/>
 
 				<!-- The names of the .jar files hello will use when it runs, separated by spaces -->
-				<attribute name="Class-Path" value="apache-mime4j-0.4.jar commons-codec-1.3.jar commons-logging-1.1.1.jar httpclient-4.0-beta1.jar httpcore-4.0-beta2.jar httpmime-4.0-beta1.jar itunes-0.4.jar jdom.jar rome-1.0RC1.jar swing-worker-1.2.jar"/>
+				<attribute name="Class-Path" value="apache-mime4j-0.4.jar commons-codec-1.3.jar commons-logging-1.1.1.jar httpclient-4.0-beta1.jar httpcore-4.0-beta2.jar httpmime-4.0-beta1.jar itunes-0.4.jar jdom.jar rome-1.0RC1.jar"/>
 			</manifest>
 		</jar>
 

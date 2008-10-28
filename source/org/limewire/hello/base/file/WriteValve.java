@@ -24,7 +24,7 @@ public class WriteValve extends Close implements Valve {
 	/** The open File we write to. */
 	private final File file;
 	/** Our current WriteLater, null if we don't have one right now. */
-	private WriteLater later;
+	private WriteTask later;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
@@ -51,7 +51,7 @@ public class WriteValve extends Close implements Valve {
 	public void start() {
 		if (closed()) return;
 		if (!meter.isDone() && later == null && in.hasData())
-			later = new WriteLater(update, file, meter.remain(), in);
+			later = new WriteTask(update, file, meter.remain(), in);
 	}
 	
 	public void stop() throws Exception {

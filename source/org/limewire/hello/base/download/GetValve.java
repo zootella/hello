@@ -24,7 +24,7 @@ public class GetValve extends Close implements Valve {
 	/** The Get we download from. */
 	private final Get get;
 	/** Our current DownloadLater, null if we don't have one right now. */
-	private GetLater later;
+	private GetTask later;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
@@ -51,7 +51,7 @@ public class GetValve extends Close implements Valve {
 	public void start() {
 		if (closed()) return;
 		if (!meter.isDone() && later == null && out.hasSpace())
-			later = new GetLater(update, get, meter.remain(), out);
+			later = new GetTask(update, get, meter.remain(), out);
 	}
 	
 	public void stop() throws Exception {

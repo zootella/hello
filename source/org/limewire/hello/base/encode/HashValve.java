@@ -23,22 +23,22 @@ public class HashValve extends Close implements Valve {
 	private final Update update;
 	/** The Hash that hashes the data. */
 	public final Hash hash;
-	/** Our current HashLater, null if we don't have one right now. */
-	private HashLater later;
+	/** Our current task, null if we don't have one right now. */
+	private HashTask task;
 
 	/** Close this Valve so it gives up all resources and won't start again. */
 	public void close() {
 		if (already()) return;
-		if (later != null) {
-			later.close();
-			later = null; // Discard the closed later so in() and out() work
+		if (task != null) {
+			task.close();
+			task = null; // Discard the closed later so in() and out() work
 		}
 	}
 
 	// Valve
 	
 	public Bin in() {
-		if (later != null) return null; // later's worker thread is using our bin, keep it private
+		if (task != null) return null; // later's worker thread is using our bin, keep it private
 		return in;
 	}
 	private Bin in;
@@ -50,22 +50,22 @@ public class HashValve extends Close implements Valve {
 	
 	public void start() {
 		if (closed()) return;
-		if (!meter.isDone() && later == null && in.hasData())
-			later = new HashLater(update, hash, in, meter.remain());
+		if (!meter.isDone() && task == null && in.hasData())
+			task = new HashTask(update, hash, in, meter.remain());
 	}
 
 	public void stop() throws Exception {
 		if (closed()) return;
-		if (later != null && later.closed()) { // Our later finished
-			meter.add(later.result().stripe.size); // If an exception closed later, result() will throw it
-			later = null; // Discard the closed later, now in() and out() will work
+		if (task != null && task.closed()) { // Our later finished
+			meter.add(task.result().stripe.size); // If an exception closed later, result() will throw it
+			task = null; // Discard the closed later, now in() and out() will work
 		}
 		if (meter.isDone()) close(); // All done
 	}
 	
 	public boolean isEmpty() {
 		return
-			later == null && // No later using our bins
+			task == null && // No later using our bins
 			in.isEmpty()  && // No data
 			meter.isEmpty(); // No responsibility to do more
 	}

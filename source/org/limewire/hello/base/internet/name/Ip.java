@@ -1,6 +1,5 @@
 package org.limewire.hello.base.internet.name;
 
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;

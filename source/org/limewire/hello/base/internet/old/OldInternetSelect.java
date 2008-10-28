@@ -1,6 +1,5 @@
 package org.limewire.hello.base.internet.old;
 
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
@@ -10,7 +9,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Iterator;
 
-import org.jdesktop.swingworker.SwingWorker;
+import javax.swing.SwingWorker;
 
 import org.limewire.hello.all.Main;
 import org.limewire.hello.base.exception.PlatformException;

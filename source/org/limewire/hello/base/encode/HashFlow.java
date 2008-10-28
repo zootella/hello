@@ -3,7 +3,7 @@ package org.limewire.hello.base.encode;
 import org.limewire.hello.base.data.Data;
 import org.limewire.hello.base.file.File;
 import org.limewire.hello.base.file.Open;
-import org.limewire.hello.base.file.OpenLater;
+import org.limewire.hello.base.file.OpenTask;
 import org.limewire.hello.base.file.Path;
 import org.limewire.hello.base.file.ReadValve;
 import org.limewire.hello.base.size.Range;
@@ -35,7 +35,7 @@ public class HashFlow extends Close {
 	
 	// Open path into file with open
 	private final String path;
-	private OpenLater open;
+	private OpenTask open;
 	private File file;
 
 	/** The Range in file we hash. */
@@ -84,7 +84,7 @@ public class HashFlow extends Close {
 				
 				// File
 				if (file == null && open == null)
-					open = new OpenLater(update, new Open(new Path(path), null, Open.read));
+					open = new OpenTask(update, new Open(new Path(path), null, Open.read));
 				if (file == null && open != null && open.closed()) {
 					file = open.result();
 					range = range.know(file.size()); // Update range now that we know the file size

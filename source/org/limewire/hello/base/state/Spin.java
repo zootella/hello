@@ -19,7 +19,8 @@ public class Spin {
 
 		// Count this event, and throw an exception if there are too many
 		count++;
-		if (count > limit) throw new IllegalStateException();
+//		if (count > limit) throw new IllegalStateException();
+//TODO put that back
 	}
 
 	/** The second we're in, 0 before we start. */
